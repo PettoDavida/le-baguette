@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import {UserModel} from "./users.Model";
 import * as crypto from "crypto";
 import {generateToken, RequestWithUser} from "../jwt.utils";
+import {createErrorJson} from "../utils";
 
 const getAllUsers = async (req: Request, res: Response) => {
   let users = await UserModel.find();
@@ -27,7 +28,7 @@ export async function changePassword(id: string, newPassword: string) {
 
 const updateUserPassword = async (req: RequestWithUser, res: Response) => {
   if (!req.body.newPassword) {
-    res.status(400).json({message: "Require 'newPassword'"});
+    res.status(400).json(createErrorJson("Require 'newPassword'"));
     return;
   }
 
@@ -40,7 +41,7 @@ const updateUserPassword = async (req: RequestWithUser, res: Response) => {
     // Update self password
 
     if (!req.body.oldPassword) {
-      res.status(400).json({message: "Require 'oldPassword'"});
+      res.status(400).json(createErrorJson("Require 'oldPassword'"));
       return;
     }
     let password = req.body.oldPassword;
@@ -58,18 +59,18 @@ const updateUserPassword = async (req: RequestWithUser, res: Response) => {
     // Bypass self check
     await updatePassword(req.body.newPassword);
   } else {
-    res.status(500).json({message: "Internal Server Error"});
+    res.status(500).json(createErrorJson("Internal Server Error"));
   }
 };
 
 const updateUserEmail = async (req: RequestWithUser, res: Response) => {
   if (!req.body.oldEmail) {
-    res.status(400).json({message: "Require 'oldEmail'"});
+    res.status(400).json(createErrorJson("Require 'oldEmail'"));
     return;
   }
 
   if (!req.body.newEmail) {
-    res.status(400).json({message: "Require 'newEmail'"});
+    res.status(400).json(createErrorJson("Require 'newEmail'"));
     return;
   }
 
@@ -86,7 +87,7 @@ const updateUserEmail = async (req: RequestWithUser, res: Response) => {
       );
       res.status(200).json(updatedUser);
     } else {
-      res.status(403).json({message: "Email already taken"});
+      res.status(403).json(createErrorJson("Email already taken"));
     }
   } else {
     res.sendStatus(401);
@@ -95,12 +96,12 @@ const updateUserEmail = async (req: RequestWithUser, res: Response) => {
 
 const addUser = async (req: Request, res: Response) => {
   if (!req.body.password) {
-    res.status(400).json({message: "Password required"});
+    res.status(400).json(createErrorJson("Password required"));
     return;
   }
 
   if (!req.body.email) {
-    res.status(400).json({message: "Email required"});
+    res.status(400).json(createErrorJson("Email required"));
     return;
   }
 
@@ -123,7 +124,7 @@ const addUser = async (req: Request, res: Response) => {
     const newUser = await user.save();
     res.status(201).json(newUser);
   } else {
-    res.status(403).json({message: "This email already has an account"});
+    res.status(403).json(createErrorJson("This email already has an account"));
   }
 };
 
@@ -146,10 +147,10 @@ const loginUser = async (req: Request, res: Response) => {
 
       res.status(200).json({token});
     } else {
-      res.status(403).json({message: "Email or Password incorrect"});
+      res.status(403).json(createErrorJson("Email or Password incorrect"));
     }
   } else {
-    res.status(403).json({message: "Email or Password incorrect"});
+    res.status(403).json(createErrorJson("Email or Password incorrect"));
   }
 };
 

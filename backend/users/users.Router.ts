@@ -11,6 +11,7 @@ import {
 } from "./users.Controller";
 import {verifyToken} from "../jwt.utils";
 import {isAdmin, selfOrAdmin} from "../middleware.utils";
+
 export default express
   .Router()
   .get("/user", verifyToken, isAdmin, getAllUsers)
