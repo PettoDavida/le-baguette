@@ -9,6 +9,7 @@ import postRouter from "./posts/posts.Router";
 import subRouter from "./subs/subs.Router";
 import userRouter from "./users/users.Router";
 import voteRouter from "./votes/votes.Router";
+import {createErrorJson} from "./utils";
 
 dotenv.config({path: __dirname + "/.env"});
 
@@ -46,6 +47,24 @@ app.use("/api", postRouter);
 app.use("/api", commentRouter);
 app.use("/api", subRouter);
 app.use("/api", mediaRouter);
+
+app.use((err, req, res, next) => {
+  if (err) {
+    if (err instanceof mongoose.Error) {
+      if (err instanceof mongoose.Error.ValidationError) {
+        const validationError = err as mongoose.Error.ValidationError;
+        res.status(400).json(createErrorJson(validationError.message));
+        return;
+      }
+
+      // TODO: Print mongoose error here
+      res.status(500).json(createErrorJson("Mongoose Error"));
+      return;
+    }
+  }
+
+  res.status(500).json(createErrorJson(err));
+});
 
 app.listen(port, () => {
   console.log(`App is listening on port ${port}`);
