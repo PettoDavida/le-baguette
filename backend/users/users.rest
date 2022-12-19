@@ -1,1 +1,51 @@
-comments.rest
+
+
+GET http://localhost:3001/api/user 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOGNkZDhlNmJhMGQ1NzRmYTk3ODE1ZiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY1NDA5MjkyNH0.kiPqksDxL7dpAYpqU8eyIeIoVuFLuFOfo0pd6K6upjQ
+
+###
+
+POST http://localhost:3001/api/user 
+Content-Type: application/json
+
+{
+    "email": "admin", 
+    "password": "admin"
+}
+
+###
+
+POST http://localhost:3001/api/user/login 
+Content-Type: application/json
+
+{
+    "email": "fobar@example.com", "password": "test123"
+
+}
+
+###
+
+PUT http://localhost:3001/api/user/password/628cdd8e6ba0d574fa97815f 
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOGI2NDdmN2M0NzkzOTcyM2EzMzljMCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY1MzgyNjE1MH0.FpJMKScqTMGIsvlBVFTWQktA8rh1Ip4UPvRk1fEkW2c
+
+{
+    "newPassword": "test123"
+
+}
+
+###
+
+PUT http://localhost:3001/api/user/email/<idOfUserToChangeEmail> 
+Content-Type: application/json 
+Authorization: Bearer <Token you get from login>
+
+{
+    "oldEmail": "", "newEmail": ""
+
+}
+
+###
+
+DELETE http://localhost:3001/api/user/<idOfUserToDelete> 
+Authorization: Bearer <Token you get from login>
