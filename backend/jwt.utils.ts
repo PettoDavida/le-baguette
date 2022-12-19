@@ -2,6 +2,7 @@ import {sign, verify} from "jsonwebtoken";
 import {NextFunction, Request, Response} from "express";
 import {Types} from "mongoose";
 import {User, UserModel} from "./users/users.Model";
+import {createErrorJson} from "./utils";
 
 export interface RequestWithUser extends Request {
   user: User;
@@ -28,17 +29,17 @@ export async function verifyToken(
     verify(
       token,
       process.env.ACCESS_TOKEN_SECRET,
-      async (err: unknown, data: UserData) => {
+      async (_err: unknown, data: UserData) => {
         let users = await UserModel.find({_id: data.id});
         if (users.length > 0) {
           req.user = users[0];
           next();
         } else {
-          res.status(400).json({message: "User doesn't exist"});
+          res.status(400).json(createErrorJson("User does not exist"));
         }
       }
     );
   } else {
-    res.status(401).json({message: "invalid token"});
+    res.status(401).json(createErrorJson("Invalid authorization token"));
   }
 }
