@@ -33,5 +33,6 @@ module.exports = {
         caughtErrorsIgnorePattern: "^_",
       },
     ],
+    "linebreak-style": 0,
   },
 }
