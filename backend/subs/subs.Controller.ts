@@ -1,18 +1,7 @@
 import {NextFunction, Request, Response} from "express";
-import {RequestWithUser} from "../jwt.utils";
+import {RequestWithUser, RequestWithUserSub} from "../middleware.utils";
 import {createErrorJson} from "../utils";
 import {SubModel} from "./subs.Model";
-
-// Get all products
-
-var ObjectId = require("mongoose").Types.ObjectId;
-
-// // Set user to the new owner
-// .put("/sub/:id/owner", () => {})
-// // Mod the user on this sub
-// .put("/sub/:id/mod", () => {})
-// // Join the sub
-// .put("/sub/:id/join", () => {});
 
 // Get all subs
 export const getAllSubs = async (
@@ -93,31 +82,88 @@ export const deleteSub = async (
 };
 
 export const setSubOwner = async (
-  req: Request,
+  req: RequestWithUserSub,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  try {
+    // TODO: Check req.body.newOwner for null
+    // TODO: Check if the newOwner is a member of the sub
+    await SubModel.findByIdAndUpdate(req.sub._id, {
+      owner: req.body.newOwner,
+    });
+    res.status(200).json({});
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const addSubMod = async (
-  req: Request,
+  req: RequestWithUserSub,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  try {
+    // TODO: Check req.body.newMod for null
+    // TODO: Check if the user is already a member
+    await SubModel.updateOne(
+      {_id: req.sub._id},
+      {$push: {mods: req.body.newMod}}
+    );
+    res.status(200).json({});
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const removeSubMod = async (
-  req: Request,
+  req: RequestWithUserSub,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  try {
+    // TODO: Check req.body.newMod for null
+    // TODO: Check if the user is a member
+    await SubModel.updateOne(
+      {_id: req.sub._id},
+      {$pull: {mods: req.body.newMod}}
+    );
+    res.status(200).json({});
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const joinSub = async (
-  req: Request,
+  req: RequestWithUserSub,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  try {
+    // TODO: Check if the user is already a member
+    await SubModel.updateOne(
+      {_id: req.sub._id},
+      {$push: {members: req.user.id}}
+    );
+    res.status(200).json({});
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const leaveSub = async (
-  req: Request,
+  req: RequestWithUserSub,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  try {
+    // TODO: Check if the user is a member
+    await SubModel.updateOne(
+      {_id: req.sub._id},
+      {$pull: {members: req.user.id}}
+    );
+    res.status(200).json({});
+  } catch (error) {
+    next(error);
+  }
+};

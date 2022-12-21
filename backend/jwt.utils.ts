@@ -1,12 +1,9 @@
 import {sign, verify} from "jsonwebtoken";
-import {NextFunction, Request, Response} from "express";
+import {NextFunction, Response} from "express";
 import {Types} from "mongoose";
-import {User, UserModel} from "./users/users.Model";
+import {UserModel} from "./users/users.Model";
 import {createErrorJson} from "./utils";
-
-export interface RequestWithUser extends Request {
-  user: User;
-}
+import {RequestWithUser} from "./middleware.utils";
 
 interface UserData {
   id: Types.ObjectId;

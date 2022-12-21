@@ -6,6 +6,7 @@ export interface Sub {
   title: string;
   owner: ObjectId;
   mods: [ObjectId];
+  members: [ObjectId];
 }
 
 const ObjId = mongoose.Schema.Types.ObjectId;
@@ -22,6 +23,7 @@ export const subSchema = new mongoose.Schema<Sub>({
   title: {type: String, required: [true, "'title' is required"]},
   owner: {type: ObjId, ref: "user", required: true},
   mods: {type: [ObjId], ref: "user", required: true, default: []},
+  members: {type: [ObjId], ref: "user", required: true, default: []},
 });
 
 export const SubModel = mongoose.model("sub", subSchema);

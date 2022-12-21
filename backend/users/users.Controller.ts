@@ -1,8 +1,9 @@
 import {Request, Response} from "express";
 import {UserModel} from "./users.Model";
 import * as crypto from "crypto";
-import {generateToken, RequestWithUser} from "../jwt.utils";
+import {generateToken} from "../jwt.utils";
 import {createErrorJson} from "../utils";
+import {RequestWithUser} from "../middleware.utils";
 
 const getAllUsers = async (req: Request, res: Response) => {
   let users = await UserModel.find();
@@ -100,6 +101,7 @@ const addUser = async (req: Request, res: Response) => {
     return;
   }
 
+  // TODO: Check if email is the right format
   if (!req.body.email) {
     res.status(400).json(createErrorJson("Email required"));
     return;
