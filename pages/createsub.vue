@@ -1,0 +1,47 @@
+<template>
+  <main class="grid place-items-center">
+    <h1>Create Sub</h1>
+
+    <Form :validation-schema="validationSchema" @submit="create">
+      <label for="id" class="textfield-label">Name</label>
+      <Field name="id" type="text" placeholder="Name" class="textfield" />
+      <ErrorMessage name="id" class="block text-red-500" />
+
+      <label for="title" class="textfield-label">Title</label>
+      <Field name="title" type="text" placeholder="Title" class="textfield" />
+      <ErrorMessage name="title" class="block text-red-500" />
+
+      <!-- <label for="image" class="textfield-label"> Image </label>
+      <Field name="image" type="text" placeholder="Image" class="textfield" />
+      <ErrorMessage name="image" class="block text-red-500" /> -->
+
+      <button type="submit" class="btn btn-primary">Create Sub</button>
+    </Form>
+  </main>
+</template>
+
+<script setup>
+import { Field, Form, ErrorMessage } from "vee-validate"
+import { toFormValidator } from "@vee-validate/zod"
+import * as zod from "zod"
+
+const router = useRouter()
+
+const validationSchema = toFormValidator(
+  zod.object({
+    id: zod.string().min(3, "Name needs to be atleast 3 characters"),
+    title: zod.string().min(6, "Title needs to be atleast 6 characters"),
+  })
+)
+
+const client = useSupabaseClient()
+const user = useSupabaseUser()
+
+const create = async (values) => {
+  let res = await client
+    .from("subs")
+    .insert({ ...values, owner: user.value.id })
+  console.log(res)
+  //   router.replace("/")
+}
+</script>
