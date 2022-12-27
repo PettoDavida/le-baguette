@@ -1,47 +1,111 @@
 <template>
-  <div v-if="sub">
-    <h1>Sub: {{ sub.title }}</h1>
-    <h1>ID: {{ sub.id }}</h1>
-    <div>
-      <button v-if="isOwner" class="btn btn-primary" @click="deleteSub">
-        Delete Sub
+  <p v-if="pending">Loading...</p>
+  <div v-else>
+    <h1>Sub: {{ data?.sub.title }}</h1>
+    <h1>ID: {{ data?.sub.id }}</h1>
+
+    <button
+      v-if="isOwner(user?.id || '')"
+      class="btn btn-primary"
+      @click="deleteSub"
+    >
+      Delete Sub
+    </button>
+
+    <button
+      v-if="!isMember(user?.id || '')"
+      class="btn btn-primary"
+      @click="joinSub"
+    >
+      Join Sub
+    </button>
+
+    <button
+      v-if="isMember(user?.id || '')"
+      class="btn btn-primary"
+      @click="leaveSub"
+    >
+      Leave Sub
+    </button>
+
+    <p>Members:</p>
+    <div v-for="member in data?.members" :key="member.id" class="flex gap-1">
+      <p>Username: {{ member.user_id.username }}</p>
+      <p v-if="isOwner(member.user_id.id)">(OWNER)</p>
+      <p v-if="isMod(member.user_id.id)">(MOD)</p>
+
+      <button
+        v-if="
+          isCurrentUserOwner() &&
+          isMod(member.user_id.id) &&
+          !isOwner(member.user_id.id)
+        "
+        class="btn btn-primary"
+        @click="makeUserOwner(member.user_id.id)"
+      >
+        Make Owner
       </button>
 
-      <button v-if="!isMember" class="btn btn-primary" @click="joinSub">
-        Join Sub
+      <button
+        v-if="isCurrentUserOwner() && !isMod(member.user_id.id)"
+        class="btn btn-primary"
+        @click="makeUserMod(member.user_id.id)"
+      >
+        Make Mod
       </button>
 
+      <button
+        v-if="isCurrentUserOwner() && isMod(member.user_id.id)"
+        class="btn btn-primary"
+        @click="removeUserMod(member.user_id.id)"
+      >
+        Kill Mod
+      </button>
+    </div>
+    <!-- <div>
       <div>
-        <p>Owner: {{ sub.owner }}</p>
+        <p>Owner: {{ sub.owner.username }}</p>
         <p>Members</p>
         <div
           v-for="member in members"
-          :key="member.userID"
+          :key="member.user_id.id"
           class="flex items-center gap-4"
         >
-          <p>{{ member.userID }}</p>
-          <p v-if="isUserMod(member.userID)">MOD</p>
+          <p>{{ member.user_id.username }}</p>
+          <p v-if="isUserMod(member.user_id)">MOD</p>
           <button
-            v-if="isOwner && !isUserMod(member.userID)"
+            v-if="isOwner"
             class="btn btn-primary"
-            @click="makeUserMod(member.userID)"
+            @click="makeUserOwner(member.user_id)"
           >
-            Make Mod
-          </button>
-          <button
-            v-if="isOwner && isUserMod(member.userID)"
-            class="btn btn-primary"
-            @click="removeUserMod(member.userID)"
-          >
-            Kill Mod
+            Make Owner
           </button>
         </div>
       </div>
     </div>
+
+    <div class="mt-10">
+      <p class="text-2xl mb-5">Posts</p>
+      <div
+        v-for="post in posts"
+        :key="post.id"
+        class="flex items-center gap-10"
+      >
+        <NuxtLink :to="'/post/' + post.id" class="btn btn-primary">{{
+          post.title
+        }}</NuxtLink>
+        <Post
+          :title="post.title || 'Error'"
+          :content="post.content || 'Error'"
+          :sub="post.sub_id.title || 'Error'"
+          :creator="post.user_id.username || 'Error'"
+        />
+      </div>
+    </div> -->
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
 
@@ -50,79 +114,234 @@ const user = useSupabaseUser()
 
 let id = route.params.id
 
-const { data: sub } = await client.from("subs").select().eq("id", id).single()
-const { data: members } = await client
-  .from("submembers")
-  .select()
-  .eq("subID", sub.id)
-
-let isOwner = user.value.id === sub.owner
-let isMod = sub.mods
-  ? sub.mods.findIndex((item) => item === user.value.id) !== -1
-  : false
-
-let isMember = members.findIndex((item) => item.userID === user.value.id) !== -1
-isMember = isMember || isOwner
-
-const isUserMod = (userID) => {
-  if (!sub.mods) return false
-
-  return sub.mods.findIndex((item) => item === userID) !== -1
+type Sub = {
+  id: string
+  title: string
+  owner: User
 }
+
+type Mod = {
+  id: string
+  user_id: string
+  sub_id: string
+}
+
+type User = {
+  id: string
+  username: string
+}
+
+type Member = {
+  id: string
+  user_id: User
+  sub_id: string
+}
+
+type Data = {
+  sub: Sub
+  members: Member[]
+  mods: Mod[]
+}
+
+const fetchMembers = async (sub_id: string) => {
+  let { data: members } = await client
+    .from("submembers")
+    .select("*, user_id(id, username)")
+    .eq("sub_id", sub_id)
+
+  return members as Member[]
+}
+
+const fetchMods = async (sub_id: string) => {
+  let { data: mods } = await client
+    .from("submods")
+    .select()
+    .eq("sub_id", sub_id)
+
+  return mods as Mod[]
+}
+
+let { data, pending } = useAsyncData(async () => {
+  let { data: subData, error } = await client
+    .from("subs")
+    .select("*, owner(id, username)")
+    .eq("id", id)
+    .single()
+
+  if (error) return null
+
+  let sub = subData as unknown as Sub
+
+  let members = await fetchMembers(sub.id)
+  let mods = await fetchMods(sub.id)
+
+  return { sub, members, mods } as Data
+})
+
+const isMember = (user_id: string) => {
+  if (data.value) {
+    return (
+      data.value.members.findIndex((item) => item.user_id.id === user_id) !== -1
+    )
+  }
+
+  return false
+}
+
+const isOwner = (user_id: string) => {
+  if (data.value) {
+    return data.value.sub.owner.id === user_id
+  }
+
+  return false
+}
+
+const isCurrentUserOwner = () => {
+  if (user.value) return isOwner(user.value.id)
+  return false
+}
+
+const isMod = (user_id: string) => {
+  if (data.value) {
+    return data.value.mods.findIndex((item) => item.user_id === user_id) !== -1
+  }
+
+  return false
+}
+
+// const { data: posts } = await client
+//   .from("posts")
+//   .select("*, user_id(username), sub_id(title)")
+//   .eq("sub_id", sub.id)
+// console.log(posts)
+
+// let isOwner = user.value.id === sub.owner.id
+// let isMod = sub.mods
+//   ? sub.mods.findIndex((item) => item === user.value.id) !== -1
+//   : false
+
+// let isMember =
+//   members.findIndex((item) => item.user_id.id === user.value.id) !== -1
+// isMember = isMember || isOwner
+
+// const isUserMod = (user_id) => {
+//   if (!sub.mods) return false
+
+//   return sub.mods.findIndex((item) => item === user_id) !== -1
+// }
 
 const deleteSub = async () => {
   // TODO: Handle errors
-  let res = await client.from("subs").delete().eq("id", id)
-  console.log(res)
+  let res = await client.from("submembers").delete().eq("sub_id", id)
+  console.log("Delete Submembers", res)
+
+  res = await client.from("submods").delete().eq("sub_id", id)
+  console.log("Delete Submods", res)
+
+  res = await client.from("posts").delete().eq("sub_id", id)
+  console.log("Delete Posts", res)
+
+  res = await client.from("subs").delete().eq("id", id)
+  console.log("Delete Sub", res)
+
   router.replace("/")
 }
 
 const joinSub = async () => {
-  // TODO: Handle errors
-  let res = await client
-    .from("submembers")
-    .insert({ userID: user.value.id, subID: id, mod: true })
-  console.log(res)
+  if (user.value) {
+    let obj = {
+      user_id: user.value.id,
+      sub_id: id,
+    } as never
+
+    // TODO: Handle errors
+    let res = await client.from("submembers").insert([obj])
+    console.log("Join Sub", res)
+  }
 }
 
-const makeUserMod = async (userID) => {
+const leaveSub = async () => {
   // TODO: Handle errors
-  let { data: old } = await client
-    .from("subs")
-    .select("mods")
-    .eq("id", id)
-    .single()
-  let mods = old.mods || []
 
-  for (let mod of mods) {
-    if (mod === userID) {
+  if (!user.value) return
+  if (!data.value) return
+
+  let sub = data.value.sub
+
+  if (isCurrentUserOwner()) {
+    if (!data.value.sub) return
+
+    let mods = await fetchMods(sub.id)
+    mods = mods.filter((item) => item.user_id !== sub.owner.id)
+
+    let newOwner: string | undefined = undefined
+
+    if (mods.length > 0) {
+      console.log("Picking from mods")
+      newOwner = mods[0].user_id
+    } else {
+      let members = await fetchMembers(sub.id)
+      members = members.filter((item) => item.user_id.id !== sub.owner.id)
+      console.log(members)
+
+      if (members.length > 0) {
+        console.log("Picking from members")
+        newOwner = members[0].user_id.id
+      }
+    }
+
+    console.log("New Owner", newOwner)
+
+    if (newOwner === undefined) {
+      await deleteSub()
+      router.replace("/")
       return
+    } else {
+      let res = await client
+        .from("submembers")
+        .delete()
+        .eq("user_id", user.value.id)
+        .eq("sub_id", sub.id)
+      console.log("Delete Members", res)
+
+      res = await client
+        .from("submods")
+        .delete()
+        .eq("user_id", user.value.id)
+        .eq("sub_id", sub.id)
+      console.log("Delete Subs", res)
+
+      await makeUserOwner(newOwner)
     }
   }
-
-  // TODO: Handle errors
-  let res = await client
-    .from("subs")
-    .update({ mods: [...mods, userID] })
-    .eq("id", id)
-  console.log(res)
 }
 
-const removeUserMod = async (userID) => {
-  // TODO: Handle errors
-  let { data: old } = await client
-    .from("subs")
-    .select("mods")
-    .eq("id", id)
-    .single()
-  let mods = old.mods || []
+const makeUserMod = async (user_id: string) => {
+  if (!isCurrentUserOwner()) return
 
-  let newModList = mods.filter((item) => item !== userID)
+  let res = await client
+    .from("submods")
+    .insert({ user_id, sub_id: id } as never)
+  console.log("Make User Mod", res)
+}
 
-  // TODO: Handle errors
+const removeUserMod = async (user_id: string) => {
+  if (!isCurrentUserOwner()) return
+
+  let res = await client
+    .from("submods")
+    .delete()
+    .eq("user_id", user_id)
+    .eq("sub_id", id)
+  console.log("Remove User Mod", res)
+}
+
+const makeUserOwner = async (user_id: string) => {
+  if (!isCurrentUserOwner()) return
+
   let res = await client
     .from("subs")
-    .update({ mods: [...newModList] })
+    .update({ owner: user_id } as never)
     .eq("id", id)
   console.log(res)
 }
