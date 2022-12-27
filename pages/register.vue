@@ -76,6 +76,6 @@ const register = async (values) => {
   })
   console.log(res)
 
-  router.replace("/")
+  router.replace("/accountsetup")
 }
 </script>
