@@ -3,7 +3,11 @@
     <div v-for="sub in subs" :key="sub.id">
       <NuxtLink :to="'/le/' + sub.id"> {{ sub.title }}</NuxtLink>
     </div>
-    <button @click="test" class="btn btn-primary">Test</button>
+
+    <form @submit.prevent="test">
+      <input ref="fileInput" type="file" />
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
   </div>
 </template>
 
@@ -15,17 +19,14 @@ const { data: subs } = await useAsyncData("subs", async () => {
   return data
 })
 
-const test = async () => {
-  let { data } = await client.from("test").select().eq("id", 1).single()
+const fileInput = ref(null)
 
-  let res = await client
-    .from("test")
-    .update({
-      testarray: [...data.testarray, 999],
-    })
-    .eq("id", 1)
-    .select()
-    .eq("id", 1)
+const test = async (form) => {
+  let file = fileInput.value.files[0]
+  console.log("Form", file)
+  let res = await client.storage
+    .from("images")
+    .upload("public/" + file?.name, file)
   console.log(res)
 }
 </script>
