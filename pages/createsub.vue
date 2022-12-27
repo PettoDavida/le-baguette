@@ -41,7 +41,20 @@ const create = async (values) => {
   let res = await client
     .from("subs")
     .insert({ ...values, owner: user.value.id })
-  console.log(res)
-  //   router.replace("/")
+    .select()
+    .single()
+
+  console.log("Create Sub", res)
+  let sub_id = res.data.id
+
+  res = await client
+    .from("submembers")
+    .insert({ user_id: user.value.id, sub_id })
+  console.log("Join", res)
+
+  res = await client.from("submods").insert({ user_id: user.value.id, sub_id })
+  console.log("Modded", res)
+
+  router.replace("/")
 }
 </script>
