@@ -28,6 +28,7 @@
     "@vee-validate/zod": "^4.7.3",
     "pinia": "^2.0.28",
     "vee-validate": "^4.7.3",
+    "vue-material-design-icons": "^5.1.2",
     "zod": "^3.20.0-beta.0"
   }
 }
