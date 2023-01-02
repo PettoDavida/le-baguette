@@ -1,14 +1,15 @@
 <template>
   <div class="grid place-items-center">
+    <div class="bg-white text-center rounded-md w-1/3 shadow-lg p-4">
     <h1>Register</h1>
 
-    <Form :validation-schema="validationSchema" @submit="register">
+    <Form class="text-start flex justify-center flex-col" :validation-schema="validationSchema" @submit="register">
       <label for="username" class="textfield-label">Username</label>
       <Field
         name="username"
         type="text"
         placeholder="Username"
-        class="textfield"
+        class="textfield mb-4"
       />
       <ErrorMessage name="username" class="block text-red-500" />
 
@@ -17,7 +18,7 @@
         name="password"
         type="password"
         placeholder="Password"
-        class="textfield"
+        class="textfield mb-4"
       />
       <ErrorMessage name="password" class="block text-red-500" />
 
@@ -28,12 +29,13 @@
         name="confirmPassword"
         type="password"
         placeholder="Confirm Password"
-        class="textfield"
+        class="textfield mb-4"
       />
       <ErrorMessage name="confirmPassword" class="block text-red-500" />
 
-      <button type="submit" class="btn btn-primary">Register</button>
+        <button type="submit" class="btn btn-primary">Register</button>
     </Form>
+    </div>
   </div>
 </template>
 

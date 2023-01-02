@@ -1,28 +1,31 @@
 <template>
   <div class="grid place-items-center">
-    <h1>Login</h1>
+    <div class="bg-white rounded-md w-1/3 text-center shadow-lg p-4">
+      <h1>Login</h1>
+  
+      <Form class="text-start flex justify-center flex-col" :validation-schema="validationSchema" @submit="login">
+        <label for="username" class="textfield-label">Username</label>
+        <Field
+          name="username"
+          type="text"
+          placeholder="Username"
+          class="textfield"
+        />
+        <ErrorMessage name="username" class="block text-red-500" />
+  
+        <label for="password" class="textfield-label mt-8">Password</label>
+        <Field
+          name="password"
+          type="password"
+          placeholder="Password"
+          class="textfield mb-8"
+        />
+        <ErrorMessage name="password" class="block text-red-500" />
+  
+        <button type="submit" class="btn btn-primary">Login</button>
+      </Form>
 
-    <Form :validation-schema="validationSchema" @submit="login">
-      <label for="username" class="textfield-label">Username</label>
-      <Field
-        name="username"
-        type="text"
-        placeholder="Username"
-        class="textfield"
-      />
-      <ErrorMessage name="username" class="block text-red-500" />
-
-      <label for="password" class="textfield-label">Password</label>
-      <Field
-        name="password"
-        type="password"
-        placeholder="Password"
-        class="textfield"
-      />
-      <ErrorMessage name="password" class="block text-red-500" />
-
-      <button type="submit" class="btn btn-primary">Login</button>
-    </Form>
+    </div>
   </div>
 </template>
 

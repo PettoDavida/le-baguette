@@ -1,5 +1,5 @@
 <template>
-  <header class="h-20 flex justify-between items-center">
+  <header class="h-20 flex justify-between items-center bgRedPrimary w-full">
     <NuxtLink to="/"
       ><img src="~/public/images/baguette.jpg" alt="Le Baguette" class="w-20"
     /></NuxtLink>
