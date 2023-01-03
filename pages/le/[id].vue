@@ -62,46 +62,23 @@
         Kill Mod
       </button>
     </div>
-    <!-- <div>
-      <div>
-        <p>Owner: {{ sub.owner.username }}</p>
-        <p>Members</p>
-        <div
-          v-for="member in members"
-          :key="member.user_id.id"
-          class="flex items-center gap-4"
-        >
-          <p>{{ member.user_id.username }}</p>
-          <p v-if="isUserMod(member.user_id)">MOD</p>
-          <button
-            v-if="isOwner"
-            class="btn btn-primary"
-            @click="makeUserOwner(member.user_id)"
-          >
-            Make Owner
-          </button>
-        </div>
-      </div>
-    </div>
 
     <div class="mt-10">
       <p class="text-2xl mb-5">Posts</p>
       <div
-        v-for="post in posts"
+        v-for="post in data?.posts"
         :key="post.id"
         class="flex items-center gap-10"
       >
-        <NuxtLink :to="'/post/' + post.id" class="btn btn-primary">{{
-          post.title
-        }}</NuxtLink>
         <Post
+          :id="post.id || 'Error'"
           :title="post.title || 'Error'"
           :content="post.content || 'Error'"
           :sub="post.sub_id.title || 'Error'"
           :creator="post.user_id.username || 'Error'"
         />
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -137,10 +114,28 @@ type Member = {
   sub_id: string
 }
 
+type Post = {
+  id: string
+  title: string
+  content: string
+  user_id: User
+  sub_id: Sub
+}
+
 type Data = {
   sub: Sub
   members: Member[]
   mods: Mod[]
+  posts: Post[]
+}
+
+const fetchPosts = async (sub_id: string) => {
+  let { data: posts } = await client
+    .from("posts")
+    .select("*, user_id(username), sub_id(title)")
+    .eq("sub_id", sub_id)
+
+  return posts as Post[]
 }
 
 const fetchMembers = async (sub_id: string) => {
@@ -174,8 +169,9 @@ let { data, pending } = useAsyncData(async () => {
 
   let members = await fetchMembers(sub.id)
   let mods = await fetchMods(sub.id)
+  let posts = await fetchPosts(sub.id)
 
-  return { sub, members, mods } as Data
+  return { sub, members, mods, posts } as Data
 })
 
 const isMember = (user_id: string) => {
@@ -208,27 +204,6 @@ const isMod = (user_id: string) => {
 
   return false
 }
-
-// const { data: posts } = await client
-//   .from("posts")
-//   .select("*, user_id(username), sub_id(title)")
-//   .eq("sub_id", sub.id)
-// console.log(posts)
-
-// let isOwner = user.value.id === sub.owner.id
-// let isMod = sub.mods
-//   ? sub.mods.findIndex((item) => item === user.value.id) !== -1
-//   : false
-
-// let isMember =
-//   members.findIndex((item) => item.user_id.id === user.value.id) !== -1
-// isMember = isMember || isOwner
-
-// const isUserMod = (user_id) => {
-//   if (!sub.mods) return false
-
-//   return sub.mods.findIndex((item) => item === user_id) !== -1
-// }
 
 const deleteSub = async () => {
   // TODO: Handle errors
