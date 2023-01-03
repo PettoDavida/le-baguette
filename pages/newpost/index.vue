@@ -19,10 +19,10 @@
       <Field name="sub" placeholder="sub" as="select" class="block">
         <option
           v-for="sub in userSubs"
-          :key="sub.subID.id"
-          :value="sub.subID.id"
+          :key="sub.sub_id.id"
+          :value="sub.sub_id.id"
         >
-          {{ sub.subID.title }}
+          {{ sub.sub_id.title }}
         </option>
       </Field>
       <ErrorMessage name="sub" class="block text-red-500" />
@@ -52,7 +52,7 @@ const user = useSupabaseUser()
 
 let { data: userSubs } = await client
   .from("submembers")
-  .select("subID(id, title)")
+  .select("sub_id(id, title)")
   .eq("user_id", user.value.id)
 console.log(userSubs)
 
@@ -63,7 +63,7 @@ const newPost = async (values) => {
     title: values.title,
     content: values.content,
     user_id: user.value.id,
-    subID: values.sub,
+    sub_id: values.sub,
   }
 
   let res = await client.from("posts").insert(obj)
