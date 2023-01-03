@@ -8,9 +8,9 @@
       <p>about</p>
     </div>
     <div class="mt-10">
-      <div v-for="sub in data?.subs" :key="sub.subID.id" class="flex gap-4">
-        <NuxtLink :to="'/le/' + sub.subID.id">le/{{ sub.subID.id }}</NuxtLink>
-        <p>{{ sub.subID.title }}</p>
+      <div v-for="sub in data?.subs" :key="sub.sub_id.id" class="flex gap-4">
+        <NuxtLink :to="'/le/' + sub.sub_id.id">le/{{ sub.sub_id.id }}</NuxtLink>
+        <p>{{ sub.sub_id.title }}</p>
       </div>
       <div class="mt-10">
         <div v-for="post in data?.posts" :key="post.id">
@@ -48,7 +48,7 @@ type Post = {
 
 type Data = {
   posts: Post[]
-  subs: { subID: Sub }[]
+  subs: { sub_id: Sub }[]
 }
 
 const router = useRouter()
@@ -66,7 +66,7 @@ let { data, pending } = useAsyncData(async () => {
 
   let { data: subs } = await client
     .from("submembers")
-    .select("subID(id, title)")
+    .select("sub_id(id, title)")
     .eq("user_id", id)
 
   return {
