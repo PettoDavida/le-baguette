@@ -1,21 +1,25 @@
 <template>
   <div
-    class="shadow-lg px-10 py-5 bg-lime-300 hover:cursor-pointer"
+    class="flex shadow-lg px-10 py-5 bg-lime-300 hover:cursor-pointer"
     @click="gotoPost"
   >
-    <p>Sub: {{ props.sub }}</p>
-    <h2>Title: {{ props.title }}</h2>
-    <p>Creator: {{ props.creator }}</p>
-    <span>Content: {{ props.content }}</span>
-    <button @click.stop="upVotePost(props.id)">
-      <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
-      <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
-    </button>
-    <p>{{ voteCount }}</p>
-    <button @click.stop="downVotePost(props.id)">
-      <DownVote v-if="!downvote" title="Down Vote" fill-color="#" />
-      <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
-    </button>
+    <div class="px-4 items-center flex flex-col">
+      <button @click.stop="upVotePost(props.id)">
+        <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
+        <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
+      </button>
+      <p>{{ voteCount }}</p>
+      <button @click.stop="downVotePost(props.id)">
+        <DownVote v-if="!downvote" title="Down Vote" fill-color="#" />
+        <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
+      </button>
+    </div>
+    <div>
+      <p>Sub: {{ props.sub }}</p>
+      <h2>Title: {{ props.title }}</h2>
+      <p>Creator: {{ props.creator }}</p>
+      <span>Content: {{ props.content }}</span>
+    </div>
   </div>
 </template>
 
