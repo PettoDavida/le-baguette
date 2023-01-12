@@ -77,12 +77,17 @@
           :sub="post.sub_id.title || 'Error'"
           :creator="post.user_id.username || 'Error'"
         />
+        <button class="btn btn-primary" @click="deletePost(post.id)">
+          Delete Post
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import Post from "~/components/Post"
+
 const route = useRoute()
 const router = useRouter()
 
@@ -319,5 +324,21 @@ const makeUserOwner = async (user_id: string) => {
     .update({ owner: user_id } as never)
     .eq("id", id)
   console.log(res)
+}
+
+const deletePost = async (post_id: string) => {
+  let res = await client.from("comments").select().eq("post_id", post_id)
+  if (res.data) {
+    for (const comment of res.data) {
+      await client
+        .from("votes")
+        .delete()
+        .eq("comment_id", (comment as any).id)
+    }
+  }
+
+  await client.from("comments").delete().eq("post_id", post_id)
+  await client.from("votes").delete().eq("post_id", post_id)
+  await client.from("posts").delete().eq("id", post_id)
 }
 </script>

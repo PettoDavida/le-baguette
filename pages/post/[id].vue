@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- <p>{{ post.title }}</p>
-    <p>{{ post.content }}</p> -->
     <p v-if="pending">Loading...</p>
     <p v-else-if="error">Error: {{ error }}</p>
     <Post
@@ -46,6 +44,7 @@
 import { Field, Form, ErrorMessage } from "vee-validate"
 import { toFormValidator } from "@vee-validate/zod"
 import * as zod from "zod"
+import Post from "~/components/Post"
 
 const validationSchema = toFormValidator(
   zod.object({

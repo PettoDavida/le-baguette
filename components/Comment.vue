@@ -12,8 +12,8 @@
       </button>
     </div>
     <div>
-      <p>Creator: {{ props.creator }}</p>
-      <span>Content: {{ props.content }}</span>
+      <p class="text-slate-500">u/{{ props.creator }}</p>
+      <span>{{ props.content }}</span>
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@ import UpVoted from "vue-material-design-icons/ArrowUpBold.vue"
 import UpVote from "vue-material-design-icons/ArrowUpBoldOutline.vue"
 import DownVoted from "vue-material-design-icons/ArrowDownBold.vue"
 import DownVote from "vue-material-design-icons/ArrowDownBoldOutline.vue"
+import { e } from "unimport/dist/types-e4738ae5"
 
 let upvote = ref(false)
 let downvote = ref(false)
@@ -37,13 +38,13 @@ type Vote = {
 
 const updateVoteCount = async () => {
   let { data: votes } = await client
-    .from("votes")
+    .from("votes-")
     .select("value")
     .eq("comment_id", props.id)
   voteCount.value =
     votes
       ?.map((item: Vote) => item.value)
-      .reduce((acc: number, value: number) => acc + value) || 0
+      .reduce((acc: number, value: number) => acc + value, 0) || 0
 }
 
 useAsyncData(async () => {
@@ -53,7 +54,7 @@ useAsyncData(async () => {
 useAsyncData(async () => {
   if (user.value) {
     let res = await client
-      .from("votes")
+      .from("votes-")
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", props.id)
@@ -98,7 +99,7 @@ const props = defineProps({
 const upVotePost = async (comment_id: string) => {
   if (user.value) {
     let res = await client
-      .from("votes")
+      .from("votes-")
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", comment_id)
@@ -106,17 +107,18 @@ const upVotePost = async (comment_id: string) => {
     console.log(res)
 
     if (res.error) {
-      await client
-        .from("votes")
+      let res = await client
+        .from("votes-")
         .insert({ user_id: user.value.id, comment_id, value: 1 } as never)
       upvote.value = true
       downvote.value = false
+      console.log(res)
     } else {
       let data = res.data as any
       console.log(data)
       if (data.value === 1) {
         await client
-          .from("votes")
+          .from("votes-")
           .update({ user_id: user.value.id, comment_id, value: 0 } as never)
           .eq("user_id", user.value.id)
           .eq("comment_id", comment_id)
@@ -125,7 +127,7 @@ const upVotePost = async (comment_id: string) => {
         downvote.value = false
       } else if (data.value === 0 || data.value === -1) {
         await client
-          .from("votes")
+          .from("votes-")
           .update({ user_id: user.value.id, comment_id, value: 1 } as never)
           .eq("user_id", user.value.id)
           .eq("comment_id", comment_id)
@@ -142,7 +144,7 @@ const upVotePost = async (comment_id: string) => {
 const downVotePost = async (comment_id: string) => {
   if (user.value) {
     let res = await client
-      .from("votes")
+      .from("votes-")
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", comment_id)
@@ -151,7 +153,7 @@ const downVotePost = async (comment_id: string) => {
 
     if (res.error) {
       await client
-        .from("votes")
+        .from("votes-")
         .insert({ user_id: user.value.id, comment_id, value: -1 } as never)
       upvote.value = false
       downvote.value = true
@@ -160,7 +162,7 @@ const downVotePost = async (comment_id: string) => {
       console.log(data)
       if (data.value === -1) {
         await client
-          .from("votes")
+          .from("votes-")
           .update({ user_id: user.value.id, comment_id, value: 0 } as never)
           .eq("user_id", user.value.id)
           .eq("comment_id", comment_id)
@@ -168,7 +170,7 @@ const downVotePost = async (comment_id: string) => {
         downvote.value = false
       } else if (data.value === 0 || data.value === 1) {
         await client
-          .from("votes")
+          .from("votes-")
           .update({ user_id: user.value.id, comment_id, value: -1 } as never)
           .eq("user_id", user.value.id)
           .eq("comment_id", comment_id)

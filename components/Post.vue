@@ -48,13 +48,13 @@ type Vote = {
 
 const updateVoteCount = async () => {
   let { data: votes } = await client
-    .from("votes")
+    .from("votes-posts")
     .select("value")
     .eq("post_id", props.id)
   voteCount.value =
     votes
       ?.map((item: Vote) => item.value)
-      .reduce((acc: number, value: number) => acc + value) || 0
+      .reduce((acc: number, value: number) => acc + value, 0) || 0
 }
 
 useAsyncData(async () => {
@@ -64,7 +64,7 @@ useAsyncData(async () => {
 useAsyncData(async () => {
   if (user.value) {
     let res = await client
-      .from("votes")
+      .from("votes-posts")
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", props.id)
@@ -117,7 +117,7 @@ const props = defineProps({
 const upVotePost = async (post_id: string) => {
   if (user.value) {
     let res = await client
-      .from("votes")
+      .from("votes-posts")
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
@@ -126,7 +126,7 @@ const upVotePost = async (post_id: string) => {
 
     if (res.error) {
       await client
-        .from("votes")
+        .from("votes-posts")
         .insert({ user_id: user.value.id, post_id, value: 1 } as never)
       upvote.value = true
       downvote.value = false
@@ -135,7 +135,7 @@ const upVotePost = async (post_id: string) => {
       console.log(data)
       if (data.value === 1) {
         await client
-          .from("votes")
+          .from("votes-posts")
           .update({ user_id: user.value.id, post_id, value: 0 } as never)
           .eq("user_id", user.value.id)
           .eq("post_id", post_id)
@@ -144,7 +144,7 @@ const upVotePost = async (post_id: string) => {
         downvote.value = false
       } else if (data.value === 0 || data.value === -1) {
         await client
-          .from("votes")
+          .from("votes-posts")
           .update({ user_id: user.value.id, post_id, value: 1 } as never)
           .eq("user_id", user.value.id)
           .eq("post_id", post_id)
@@ -161,7 +161,7 @@ const upVotePost = async (post_id: string) => {
 const downVotePost = async (post_id: string) => {
   if (user.value) {
     let res = await client
-      .from("votes")
+      .from("votes-posts")
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
@@ -170,7 +170,7 @@ const downVotePost = async (post_id: string) => {
 
     if (res.error) {
       await client
-        .from("votes")
+        .from("votes-posts")
         .insert({ user_id: user.value.id, post_id, value: -1 } as never)
       upvote.value = false
       downvote.value = true
@@ -179,7 +179,7 @@ const downVotePost = async (post_id: string) => {
       console.log(data)
       if (data.value === -1) {
         await client
-          .from("votes")
+          .from("votes-posts")
           .update({ user_id: user.value.id, post_id, value: 0 } as never)
           .eq("user_id", user.value.id)
           .eq("post_id", post_id)
@@ -187,7 +187,7 @@ const downVotePost = async (post_id: string) => {
         downvote.value = false
       } else if (data.value === 0 || data.value === 1) {
         await client
-          .from("votes")
+          .from("votes-posts")
           .update({ user_id: user.value.id, post_id, value: -1 } as never)
           .eq("user_id", user.value.id)
           .eq("post_id", post_id)
