@@ -30,7 +30,9 @@
 
     <p>Members:</p>
     <div v-for="member in data?.members" :key="member.id" class="flex gap-1">
-      <p>Username: {{ member.user_id.username }}</p>
+      <NuxtLink :to="`/profile/${member.user_id.id}`">{{
+        member.user_id.username
+      }}</NuxtLink>
       <p v-if="isOwner(member.user_id.id)">(OWNER)</p>
       <p v-if="isMod(member.user_id.id)">(MOD)</p>
 
@@ -86,8 +88,6 @@
 </template>
 
 <script setup lang="ts">
-import Post from "~/components/Post"
-
 const route = useRoute()
 const router = useRouter()
 
@@ -331,14 +331,14 @@ const deletePost = async (post_id: string) => {
   if (res.data) {
     for (const comment of res.data) {
       await client
-        .from("votes")
+        .from("votes-")
         .delete()
         .eq("comment_id", (comment as any).id)
     }
   }
 
   await client.from("comments").delete().eq("post_id", post_id)
-  await client.from("votes").delete().eq("post_id", post_id)
+  await client.from("votes-posts").delete().eq("post_id", post_id)
   await client.from("posts").delete().eq("id", post_id)
 }
 </script>
