@@ -12,6 +12,9 @@
       </button>
     </div>
     <div>
+      <button v-if="userOwner" @click="deleteComment(props.id)">
+        <Delete />
+      </button>
       <p class="text-slate-500">u/{{ props.creator }}</p>
       <span>{{ props.content }}</span>
     </div>
@@ -23,11 +26,12 @@ import UpVoted from "vue-material-design-icons/ArrowUpBold.vue"
 import UpVote from "vue-material-design-icons/ArrowUpBoldOutline.vue"
 import DownVoted from "vue-material-design-icons/ArrowDownBold.vue"
 import DownVote from "vue-material-design-icons/ArrowDownBoldOutline.vue"
-import { e } from "unimport/dist/types-e4738ae5"
+import Delete from "vue-material-design-icons/DeleteOutline.vue"
 
 let upvote = ref(false)
 let downvote = ref(false)
 let voteCount = ref(0)
+let userOwner = ref(false)
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()
@@ -81,6 +85,30 @@ useAsyncData(async () => {
   }
 })
 
+useAsyncData(async () => {
+  if (user.value) {
+    let res = await client
+      .from("comments")
+      .select()
+      .eq("user_id", user.value.id)
+      .eq("id", props.id)
+      .single()
+    if (!res.error) {
+      userOwner.value = true
+    } else {
+      let res = await client
+        .from("subs")
+        .select()
+        .eq("owner", user.value.id)
+        .eq("id", props.subId)
+        .single()
+      if (!res.error) {
+        userOwner.value = true
+      }
+    }
+  }
+})
+
 const props = defineProps({
   content: {
     type: String,
@@ -91,6 +119,10 @@ const props = defineProps({
     required: true,
   },
   id: {
+    type: String,
+    required: true,
+  },
+  subId: {
     type: String,
     required: true,
   },
@@ -181,5 +213,20 @@ const downVotePost = async (comment_id: string) => {
 
     await updateVoteCount()
   }
+}
+
+const deleteComment = async (comment_id: string) => {
+  let res = await client.from("comments").select().eq("id", comment_id)
+  if (res.data) {
+    for (const comment of res.data) {
+      await client
+        .from("votes")
+        .delete()
+        .eq("comment_id", (comment as any).id)
+    }
+  }
+
+  await client.from("comments").delete().eq("id", comment_id)
+  window.location.reload()
 }
 </script>
