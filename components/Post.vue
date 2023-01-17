@@ -19,6 +19,17 @@
       <h2>Title: {{ props.title }}</h2>
       <p>Creator: {{ props.creator }}</p>
       <span>Content: {{ props.content }}</span>
+      <p>{{ isFavorited }}</p>
+      <button
+        v-if="!isFavorited"
+        class="btn btn-primary"
+        @click.stop="favorite(props.id)"
+      >
+        favorite
+      </button>
+      <button v-else class="btn btn-primary" @click.stop="unFavorite(props.id)">
+        unfavorite
+      </button>
     </div>
   </div>
 </template>
@@ -32,6 +43,7 @@ import DownVote from "vue-material-design-icons/ArrowDownBoldOutline.vue"
 let upvote = ref(false)
 let downvote = ref(false)
 let voteCount = ref(0)
+let isFavorited = ref(false)
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()
@@ -89,6 +101,17 @@ useAsyncData(async () => {
       }
     }
   }
+})
+
+useAsyncData("favorited", async () => {
+  let res = await client
+    .from("fAVORITEDpOSTS")
+    .select()
+    .eq("user_id", user.value?.id)
+    .eq("post_id", props.id)
+    .single()
+
+  isFavorited.value = res.data !== null
 })
 
 const props = defineProps({
@@ -198,5 +221,27 @@ const downVotePost = async (post_id: string) => {
 
     await updateVoteCount()
   }
+}
+
+const favorite = async (post_id: string) => {
+  if (!user.value) return
+
+  await client
+    .from("fAVORITEDpOSTS")
+    .insert({ user_id: user.value.id, post_id: post_id } as never)
+
+  refreshNuxtData("favorited")
+}
+
+const unFavorite = async (post_id: string) => {
+  if (!user.value) return
+
+  await client
+    .from("fAVORITEDpOSTS")
+    .delete()
+    .eq("user_id", user.value.id)
+    .eq("post_id", post_id)
+
+  refreshNuxtData("favorited")
 }
 </script>
