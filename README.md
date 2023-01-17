@@ -1,11 +1,12 @@
 # TODO
 
 - [ ] Search posts/subs (BROKEN)
-- [ ] follow user
-- [ ] delete posts as admin/self
-- [ ] User page
+- [x] follow user
+- [x] delete posts as admin/self
+- [x] User page
 - [ ] ban from group
-- [ ] delete comment as admin/self
+- [x] delete comment as admin/self
 - [ ] moderator permissions
 - [ ] display posts from followed subs
-- [ ] setup site hosting
+- [x] setup site hosting
+- [x] favorite post
