@@ -9,6 +9,7 @@
             />
         </section>
         <section class="flex justify-center items-center flex-col w-1/3">
+          <h2 class="text-white text-center">Your posts: </h2>
           <post
             v-for="postProperties in postPropsArray"
             v-bind:key="postProperties.textContent"
@@ -73,8 +74,17 @@ export default{
   }
 }
 
-// if(!user.isLoggedIn){
-    //     router.replace("/login")
-    // }
+
 </script>
   
+<script setup>
+// import { useUserStore } from "~/stores/user"
+
+// const user = useUserStore()
+// const router = useRouter()
+
+
+// if(!user.isLoggedIn){
+//         router.replace("/login")
+//     }
+</script>
