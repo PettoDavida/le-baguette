@@ -1,5 +1,5 @@
 <template>
-    <div  class="flex flex-row justify-around items-start">
+    <div class="flex flex-row justify-around items-start">
         <section class="flex justify-center items-center flex-col w-1/3">
             <h2 class="text-white text-center">Subscribed threads: </h2>
             <SubscribedThreads
@@ -9,7 +9,11 @@
             />
         </section>
         <section class="flex justify-center items-center flex-col w-1/3">
-            <Post/>
+          <post
+            v-for="postProperties in postPropsArray"
+            v-bind:key="postProperties.textContent"
+            :postProperties = postProperties
+          />
         </section>
         <section class="flex justify-center items-center flex-col w-1/3">
             <ProfileBadge
@@ -22,7 +26,7 @@
   </template>
   
 <script>
-    import subscribedThreadsVue from '~~/components/subscribedThreads.vue';
+  import subscribedThreadsVue from '~~/components/subscribedThreads.vue';
 
 export default{
   components:{
@@ -32,29 +36,45 @@ export default{
     return{
       threadPropsArray:[
         {
-          threadImage: "../public/images/baguette.jpg",
+          threadImage: "https://riksarkivet.se/Media/Bilder/heraldik/flagga_small.gif",
           threadName: "r/Sweden",
         },
         {
-          threadImage: "../public/images/baguette.jpg",
+          threadImage: "https://www.varldensflaggor.se/bilder/original/norges-flagga.png",
           threadName: "r/Norway",
         },
       ],
       badgePropsArray:[
         {
-            badgeImage: "../public/images/baguette.jpg",
+            badgeImage: "https://riksarkivet.se/Media/Bilder/heraldik/flagga_small.gif",
             badgeName: "Körner",
             bio: "AAAAAA AAA aa a a a aa A AAAAAA  "
         }
-      ]
+      ],
+      postPropsArray:[
+        {
+          upVotes: "139",
+          thread: "r/sweden",
+          user: "Körner",
+          timePosted: "Today: 14:19",
+          textContent: "Vilken är den fulaste staden i sverige?",
+
+        },
+        {
+          upVotes: "530",
+          thread: "r/norway",
+          user: "Körner",
+          timePosted: "Today: 14:23",
+          textContent: "Varför är Sverige mycket bättre än Norge?",
+
+        },
+      ],
     }
   }
 }
-</script>
 
-  <script setup>
-    // if(!user.isLoggedIn){
+// if(!user.isLoggedIn){
     //     router.replace("/login")
     // }
-  </script>
+</script>
   
