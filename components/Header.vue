@@ -78,7 +78,7 @@
 import { Field, Form } from "vee-validate"
 
 import PlusIcon from "vue-material-design-icons/Plus.vue"
-import AccountIcon from "vue-material-design-icons/accountcircle.vue"
+import AccountIcon from "vue-material-design-icons/AccountCircle.vue"
 
 const router = useRouter()
 
