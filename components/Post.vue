@@ -32,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import bookmarksolid from "vue-material-design-icons/BookMark.vue"
-import bookmark from "vue-material-design-icons/BookMarkOutline.vue"
+import bookmarksolid from "vue-material-design-icons/Bookmark.vue"
+import bookmark from "vue-material-design-icons/BookmarkOutline.vue"
 import UpVoted from "vue-material-design-icons/ArrowUpBold.vue"
 import UpVote from "vue-material-design-icons/ArrowUpBoldOutline.vue"
 import DownVoted from "vue-material-design-icons/ArrowDownBold.vue"
@@ -220,7 +220,6 @@ const downVotePost = async (post_id: string) => {
   }
 }
 
-
 const favorite = async (post_id: string) => {
   if (!user.value) return
 
@@ -242,5 +241,4 @@ const unFavorite = async (post_id: string) => {
 
   refreshNuxtData("favorited")
 }
-
 </script>

@@ -80,7 +80,6 @@ import { Field, Form } from "vee-validate"
 import PlusIcon from "vue-material-design-icons/Plus.vue"
 import AccountIcon from "vue-material-design-icons/accountcircle.vue"
 
-
 const router = useRouter()
 
 const client = useSupabaseAuthClient()
@@ -94,7 +93,6 @@ const logout = async () => {
   router.replace("/")
 }
 
-
 const gotoProfile = async () => {
   router.push(`/profile/${user.value.id}`)
 }
@@ -104,6 +102,5 @@ const searchField = ref("")
 const doSearch = async () => {
   await router.replace(`/search/?term=${searchField.value}`)
   await refreshNuxtData(["subs", "posts"])
-
 }
 </script>

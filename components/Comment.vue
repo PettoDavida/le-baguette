@@ -12,7 +12,6 @@
       </button>
     </div>
     <div>
-
       <button v-if="userOwner" @click="deleteComment(props.id)">
         <Delete />
       </button>
@@ -30,12 +29,10 @@ import DownVoted from "vue-material-design-icons/ArrowDownBold.vue"
 import DownVote from "vue-material-design-icons/ArrowDownBoldOutline.vue"
 import Delete from "vue-material-design-icons/DeleteOutline.vue"
 
-
 let upvote = ref(false)
 let downvote = ref(false)
 let voteCount = ref(0)
 let userOwner = ref(false)
-
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()
@@ -129,7 +126,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-
 })
 
 const upVotePost = async (comment_id: string) => {
@@ -233,5 +229,4 @@ const deleteComment = async (comment_id: string) => {
   await client.from("comments").delete().eq("id", comment_id)
   window.location.reload()
 }
-
 </script>
