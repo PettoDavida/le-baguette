@@ -50,6 +50,7 @@ const uploadUserInfo = async (values) => {
   let imageUrl = res.data.publicUrl
 
   {
+
     let res = await client.from("userdata").insert({
       id: user.value.id,
       username: values.displayname,
@@ -58,8 +59,10 @@ const uploadUserInfo = async (values) => {
     console.log(res)
   }
 
+
   router.replace("/").then(() => {
     window.location.reload()
   })
+
 }
 </script>

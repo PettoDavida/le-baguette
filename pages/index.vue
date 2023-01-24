@@ -60,6 +60,7 @@
 
 <script setup>
 const client = useSupabaseClient()
+
 const user = useSupabaseUser()
 
 const selected = ref("popular")

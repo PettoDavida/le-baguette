@@ -19,22 +19,21 @@
       <h2>Title: {{ props.title }}</h2>
       <p>Creator: {{ props.creator }}</p>
       <span>Content: {{ props.content }}</span>
-      <p>{{ isFavorited }}</p>
-      <button
-        v-if="!isFavorited"
-        class="btn btn-primary"
-        @click.stop="favorite(props.id)"
-      >
-        favorite
-      </button>
-      <button v-else class="btn btn-primary" @click.stop="unFavorite(props.id)">
-        unfavorite
-      </button>
+      <div>
+        <button v-if="!isFavorited" @click.stop="favorite(id as string)">
+          <bookmark />
+        </button>
+        <button v-else @click.stop="unFavorite(id as string)">
+          <bookmarksolid />
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import bookmarksolid from "vue-material-design-icons/BookMark.vue"
+import bookmark from "vue-material-design-icons/BookMarkOutline.vue"
 import UpVoted from "vue-material-design-icons/ArrowUpBold.vue"
 import UpVote from "vue-material-design-icons/ArrowUpBoldOutline.vue"
 import DownVoted from "vue-material-design-icons/ArrowDownBold.vue"
@@ -112,7 +111,6 @@ useAsyncData("favorited", async () => {
 
   isFavorited.value = res.data !== null
 })
-
 const props = defineProps({
   title: {
     type: String,
@@ -222,6 +220,7 @@ const downVotePost = async (post_id: string) => {
   }
 }
 
+
 const favorite = async (post_id: string) => {
   if (!user.value) return
 
@@ -243,4 +242,5 @@ const unFavorite = async (post_id: string) => {
 
   refreshNuxtData("favorited")
 }
+
 </script>
