@@ -74,7 +74,13 @@ const register = async (values) => {
     email: values.username,
     password: values.password,
   })
-  console.log(res)
+  console.log("Register", res)
+
+  // res = await client.auth.signInWithPassword({
+  //   email: values.username,
+  //   password: values.password,
+  // })
+  // console.log(res)
 
   router.replace("/accountsetup")
 }
