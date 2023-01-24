@@ -3,11 +3,11 @@
     <h1>Login</h1>
 
     <Form :validation-schema="validationSchema" @submit="login">
-      <label for="username" class="textfield-label">Username</label>
+      <label for="username" class="textfield-label">Email</label>
       <Field
         name="username"
         type="text"
-        placeholder="Username"
+        placeholder="Email"
         class="textfield"
       />
       <ErrorMessage name="username" class="block text-red-500" />
@@ -20,6 +20,8 @@
         class="textfield"
       />
       <ErrorMessage name="password" class="block text-red-500" />
+
+      <p v-if="error" class="text-red-500">{{ error }}</p>
 
       <button type="submit" class="btn btn-primary">Login</button>
     </Form>
@@ -35,20 +37,31 @@ const router = useRouter()
 
 const validationSchema = toFormValidator(
   zod.object({
-    username: zod.string().min(3, "Username cant be less than 3 characters"),
+    username: zod
+      .string()
+      .min(3, "Email cant be less than 3 characters")
+      .email("Must be a valid email"),
     password: zod.string().min(5, "Password needs to be atleast 6 characters"),
   })
 )
 
 const client = useSupabaseAuthClient()
 
+const error = ref(null)
+
 const login = async (values) => {
-  // TODO: Handle errors
   let res = await client.auth.signInWithPassword({
     email: values.username,
     password: values.password,
   })
 
-  router.replace("/")
+  if (res.error) {
+    error.value = "Email or password was incorrect"
+    return
+  }
+
+  router.replace("/").then(() => {
+    window.location.reload()
+  })
 }
 </script>

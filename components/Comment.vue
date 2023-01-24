@@ -63,7 +63,6 @@ useAsyncData(async () => {
       .eq("user_id", user.value.id)
       .eq("comment_id", props.id)
       .single()
-    // console.log(res)
     if (!res.error) {
       switch ((res.data as any).value) {
         case -1:

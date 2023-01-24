@@ -3,11 +3,11 @@
     <h1>Register</h1>
 
     <Form :validation-schema="validationSchema" @submit="register">
-      <label for="username" class="textfield-label">Username</label>
+      <label for="username" class="textfield-label">Email</label>
       <Field
         name="username"
         type="text"
-        placeholder="Username"
+        placeholder="Email"
         class="textfield"
       />
       <ErrorMessage name="username" class="block text-red-500" />
@@ -32,6 +32,8 @@
       />
       <ErrorMessage name="confirmPassword" class="block text-red-500" />
 
+      <p v-if="error" class="text-red-500">{{ error }}</p>
+
       <button type="submit" class="btn btn-primary">Register</button>
     </Form>
   </div>
@@ -47,7 +49,10 @@ const router = useRouter()
 const validationSchema = toFormValidator(
   zod
     .object({
-      username: zod.string().min(3, "Username cant be less than 3 characters"),
+      username: zod
+        .string()
+        .min(3, "Please enter you email")
+        .email("Must be a valid email"),
       password: zod
         .string()
         .min(6, "Password needs to be atleast 6 characters"),
@@ -68,19 +73,19 @@ const validationSchema = toFormValidator(
 
 const client = useSupabaseAuthClient()
 
+const error = ref(null)
+
 const register = async (values) => {
-  // TODO: Handle errors
   let res = await client.auth.signUp({
     email: values.username,
     password: values.password,
   })
   console.log("Register", res)
 
-  // res = await client.auth.signInWithPassword({
-  //   email: values.username,
-  //   password: values.password,
-  // })
-  // console.log(res)
+  if (res.error) {
+    error.value = "Email is already in use"
+    return
+  }
 
   router.replace("/accountsetup")
 }
