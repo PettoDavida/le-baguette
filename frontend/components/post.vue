@@ -1,7 +1,8 @@
 <template>
     <div :key="postProperties.id" class="flex flex-row justify-center mt-4 mb-4 w-full">
-            <div class="flex flex-row justify-start bg-white rounded-lg w-1/4">
-                <div class="text-white rounded-lg p-2 h-full bgRedPrimary flex flex-col items-center justify-center">
+        <div class="w-full flex flex-row justify-center items-center">
+            <div class="flex flex-row justify-start bg-white rounded-lg">
+                <div class="text-white rounded-lg p-2 bgRedPrimary flex flex-col items-center justify-center">
                 <span class="material-symbols-outlined text-white cursor-pointer">
                     expand_less
                 </span>
@@ -22,6 +23,8 @@
                 </div>
                 </div>
             </div>
+
+        </div>
     </div>
   </template>
   
