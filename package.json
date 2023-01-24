@@ -26,6 +26,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.4.6",
     "@vee-validate/zod": "^4.7.3",
+    "fuzzysort": "^2.0.4",
     "pinia": "^2.0.28",
     "vee-validate": "^4.7.3",
     "vue-material-design-icons": "^5.1.2",

@@ -1,6 +1,8 @@
 <template>
   <p v-if="pending">Loading...</p>
   <div v-else>
+    <p v-if="isCurrentUserBanned()">You are banned</p>
+
     <h1>Sub: {{ data?.sub.title }}</h1>
     <h1>ID: {{ data?.sub.id }}</h1>
 
@@ -29,8 +31,10 @@
     </button>
 
     <p>Members:</p>
-    <div v-for="member in data?.members" :key="member.id" class="flex gap-1">
-      <p>Username: {{ member.user_id.username }}</p>
+    <div v-for="member in getMembers()" :key="member.id" class="flex gap-1">
+      <NuxtLink :to="`/profile/${member.user_id.id}`">{{
+        member.user_id.username
+      }}</NuxtLink>
       <p v-if="isOwner(member.user_id.id)">(OWNER)</p>
       <p v-if="isMod(member.user_id.id)">(MOD)</p>
 
@@ -61,6 +65,34 @@
       >
         Kill Mod
       </button>
+
+      <button
+        v-if="
+          (isCurrentUserOwner() && !isOwner(member.user_id.id)) ||
+          (isCurrentUserMod() && !isMod(member.user_id.id))
+        "
+        class="btn btn-primary"
+        @click="banUser(member.user_id.id)"
+      >
+        Ban User
+      </button>
+    </div>
+
+    <p class="mt-10">Banned Members</p>
+    <div>
+      <div v-for="member in getBannedUsers()" :key="member.id">
+        <NuxtLink :to="`/profile/${member.user_id.id}`">{{
+          member.user_id.username
+        }}</NuxtLink>
+
+        <button
+          v-if="isCurrentUserOwner()"
+          class="btn btn-primary"
+          @click="removeUserBan(member.user_id.id)"
+        >
+          Unban User
+        </button>
+      </div>
     </div>
 
     <div class="mt-10">
@@ -85,9 +117,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import Post from "~/components/Post"
-
+<script setup>
 const route = useRoute()
 const router = useRouter()
 
@@ -96,69 +126,40 @@ const user = useSupabaseUser()
 
 let id = route.params.id
 
-type Sub = {
-  id: string
-  title: string
-  owner: User
-}
-
-type Mod = {
-  id: string
-  user_id: string
-  sub_id: string
-}
-
-type User = {
-  id: string
-  username: string
-}
-
-type Member = {
-  id: string
-  user_id: User
-  sub_id: string
-}
-
-type Post = {
-  id: string
-  title: string
-  content: string
-  user_id: User
-  sub_id: Sub
-}
-
-type Data = {
-  sub: Sub
-  members: Member[]
-  mods: Mod[]
-  posts: Post[]
-}
-
-const fetchPosts = async (sub_id: string) => {
+const fetchPosts = async (sub_id) => {
   let { data: posts } = await client
     .from("posts")
     .select("*, user_id(username), sub_id(title)")
     .eq("sub_id", sub_id)
 
-  return posts as Post[]
+  return posts
 }
 
-const fetchMembers = async (sub_id: string) => {
+const fetchMembers = async (sub_id) => {
   let { data: members } = await client
     .from("submembers")
     .select("*, user_id(id, username)")
     .eq("sub_id", sub_id)
 
-  return members as Member[]
+  return members
 }
 
-const fetchMods = async (sub_id: string) => {
+const fetchMods = async (sub_id) => {
   let { data: mods } = await client
     .from("submods")
     .select()
     .eq("sub_id", sub_id)
 
-  return mods as Mod[]
+  return mods
+}
+
+const fetchBannedUsers = async (sub_id) => {
+  let { data: users } = await client
+    .from("bannedusers")
+    .select("*, user_id(id, username)")
+    .eq("sub_id", sub_id)
+
+  return users
 }
 
 let { data, pending } = useAsyncData(async () => {
@@ -170,16 +171,17 @@ let { data, pending } = useAsyncData(async () => {
 
   if (error) return null
 
-  let sub = subData as unknown as Sub
+  let sub = subData
 
   let members = await fetchMembers(sub.id)
   let mods = await fetchMods(sub.id)
   let posts = await fetchPosts(sub.id)
+  let bannedUsers = await fetchBannedUsers(sub.id)
 
-  return { sub, members, mods, posts } as Data
+  return { sub, members, mods, posts, bannedUsers }
 })
 
-const isMember = (user_id: string) => {
+const isMember = (user_id) => {
   if (data.value) {
     return (
       data.value.members.findIndex((item) => item.user_id.id === user_id) !== -1
@@ -189,7 +191,7 @@ const isMember = (user_id: string) => {
   return false
 }
 
-const isOwner = (user_id: string) => {
+const isOwner = (user_id) => {
   if (data.value) {
     return data.value.sub.owner.id === user_id
   }
@@ -202,12 +204,50 @@ const isCurrentUserOwner = () => {
   return false
 }
 
-const isMod = (user_id: string) => {
+const isCurrentUserMod = () => {
+  if (user.value) return isMod(user.value.id)
+  return false
+}
+
+const isCurrentUserBanned = () => {
+  if (user.value) return isUserBanned(user.value.id)
+  return false
+}
+
+const isMod = (user_id) => {
   if (data.value) {
     return data.value.mods.findIndex((item) => item.user_id === user_id) !== -1
   }
 
   return false
+}
+
+const isUserBanned = (user_id) => {
+  if (data.value) {
+    return (
+      data.value.bannedUsers.findIndex(
+        (item) => item.user_id.id === user_id
+      ) !== -1
+    )
+  }
+
+  return false
+}
+
+const getBannedUsers = () => {
+  if (data.value) {
+    return data.value.bannedUsers
+  }
+
+  return []
+}
+
+const getMembers = () => {
+  if (data.value) {
+    return data.value.members.filter((item) => !isUserBanned(item.user_id.id))
+  }
+
+  return []
 }
 
 const deleteSub = async () => {
@@ -232,7 +272,7 @@ const joinSub = async () => {
     let obj = {
       user_id: user.value.id,
       sub_id: id,
-    } as never
+    }
 
     // TODO: Handle errors
     let res = await client.from("submembers").insert([obj])
@@ -254,7 +294,7 @@ const leaveSub = async () => {
     let mods = await fetchMods(sub.id)
     mods = mods.filter((item) => item.user_id !== sub.owner.id)
 
-    let newOwner: string | undefined = undefined
+    let newOwner = undefined
 
     if (mods.length > 0) {
       console.log("Picking from mods")
@@ -296,16 +336,14 @@ const leaveSub = async () => {
   }
 }
 
-const makeUserMod = async (user_id: string) => {
+const makeUserMod = async (user_id) => {
   if (!isCurrentUserOwner()) return
 
-  let res = await client
-    .from("submods")
-    .insert({ user_id, sub_id: id } as never)
+  let res = await client.from("submods").insert({ user_id, sub_id: id })
   console.log("Make User Mod", res)
 }
 
-const removeUserMod = async (user_id: string) => {
+const removeUserMod = async (user_id) => {
   if (!isCurrentUserOwner()) return
 
   let res = await client
@@ -316,29 +354,48 @@ const removeUserMod = async (user_id: string) => {
   console.log("Remove User Mod", res)
 }
 
-const makeUserOwner = async (user_id: string) => {
+const makeUserOwner = async (user_id) => {
   if (!isCurrentUserOwner()) return
 
-  let res = await client
-    .from("subs")
-    .update({ owner: user_id } as never)
-    .eq("id", id)
+  let res = await client.from("subs").update({ owner: user_id }).eq("id", id)
   console.log(res)
 }
 
-const deletePost = async (post_id: string) => {
+const banUser = async (user_id) => {
+  if (!isCurrentUserOwner() || !isCurrentUserMod()) return
+
+  let res = await client
+    .from("submembers")
+    .delete()
+    .eq("user_id", user_id)
+    .eq("sub_id", id)
+
+  res = await client.from("bannedusers").insert({
+    user_id,
+    sub_id: id,
+  })
+  console.log(res)
+}
+
+const removeUserBan = async (user_id) => {
+  let res = await client
+    .from("bannedusers")
+    .delete()
+    .eq("user_id", user_id)
+    .eq("sub_id", id)
+  console.log(res)
+}
+
+const deletePost = async (post_id) => {
   let res = await client.from("comments").select().eq("post_id", post_id)
   if (res.data) {
     for (const comment of res.data) {
-      await client
-        .from("votes")
-        .delete()
-        .eq("comment_id", (comment as any).id)
+      await client.from("votes-").delete().eq("comment_id", comment.id)
     }
   }
 
   await client.from("comments").delete().eq("post_id", post_id)
-  await client.from("votes").delete().eq("post_id", post_id)
+  await client.from("votes-posts").delete().eq("post_id", post_id)
   await client.from("posts").delete().eq("id", post_id)
 }
 </script>

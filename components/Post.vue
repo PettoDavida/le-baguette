@@ -19,11 +19,21 @@
       <h2>Title: {{ props.title }}</h2>
       <p>Creator: {{ props.creator }}</p>
       <span>Content: {{ props.content }}</span>
+      <div>
+        <button v-if="!isFavorited" @click.stop="favorite(id as string)">
+          <bookmark />
+        </button>
+        <button v-else @click.stop="unFavorite(id as string)">
+          <bookmarksolid />
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import bookmarksolid from "vue-material-design-icons/Bookmark.vue"
+import bookmark from "vue-material-design-icons/BookmarkOutline.vue"
 import UpVoted from "vue-material-design-icons/ArrowUpBold.vue"
 import UpVote from "vue-material-design-icons/ArrowUpBoldOutline.vue"
 import DownVoted from "vue-material-design-icons/ArrowDownBold.vue"
@@ -32,6 +42,7 @@ import DownVote from "vue-material-design-icons/ArrowDownBoldOutline.vue"
 let upvote = ref(false)
 let downvote = ref(false)
 let voteCount = ref(0)
+let isFavorited = ref(false)
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()
@@ -69,7 +80,6 @@ useAsyncData(async () => {
       .eq("user_id", user.value.id)
       .eq("post_id", props.id)
       .single()
-    // console.log(res)
     if (!res.error) {
       switch ((res.data as any).value) {
         case -1:
@@ -91,6 +101,16 @@ useAsyncData(async () => {
   }
 })
 
+useAsyncData("favorited", async () => {
+  let res = await client
+    .from("fAVORITEDpOSTS")
+    .select()
+    .eq("user_id", user.value?.id)
+    .eq("post_id", props.id)
+    .single()
+
+  isFavorited.value = res.data !== null
+})
 const props = defineProps({
   title: {
     type: String,
@@ -198,5 +218,27 @@ const downVotePost = async (post_id: string) => {
 
     await updateVoteCount()
   }
+}
+
+const favorite = async (post_id: string) => {
+  if (!user.value) return
+
+  await client
+    .from("fAVORITEDpOSTS")
+    .insert({ user_id: user.value.id, post_id: post_id } as never)
+
+  refreshNuxtData("favorited")
+}
+
+const unFavorite = async (post_id: string) => {
+  if (!user.value) return
+
+  await client
+    .from("fAVORITEDpOSTS")
+    .delete()
+    .eq("user_id", user.value.id)
+    .eq("post_id", post_id)
+
+  refreshNuxtData("favorited")
 }
 </script>

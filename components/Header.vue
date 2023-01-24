@@ -53,6 +53,11 @@
         <NuxtLink to="/createsub" class="btn btn-primary">Create Sub</NuxtLink>
       </li>
       <li>
+        <button @click="gotoProfile">
+          <AccountIcon />
+        </button>
+      </li>
+      <li>
         <button class="btn btn-primary" @click="logout">Logout</button>
       </li>
     </ul>
@@ -73,6 +78,7 @@
 import { Field, Form } from "vee-validate"
 
 import PlusIcon from "vue-material-design-icons/Plus.vue"
+import AccountIcon from "vue-material-design-icons/AccountCircle.vue"
 
 const router = useRouter()
 
@@ -87,11 +93,14 @@ const logout = async () => {
   router.replace("/")
 }
 
+const gotoProfile = async () => {
+  router.push(`/profile/${user.value.id}`)
+}
+
 const searchField = ref("")
 
-const doSearch = () => {
-  router.push(`/?search=${searchField.value}`).then(() => {
-    window.location.reload()
-  })
+const doSearch = async () => {
+  await router.replace(`/search/?term=${searchField.value}`)
+  await refreshNuxtData(["subs", "posts"])
 }
 </script>
