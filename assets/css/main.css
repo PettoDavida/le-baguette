@@ -2,18 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+  background-color: #2B2D42;
+}
+
 .btn {
-  @apply px-4 py-2 rounded-lg;
+  @apply px-4 py-2 rounded-full m-1;
 }
 
 .btn-primary {
-  @apply bg-lime-500 hover:bg-sky-600;
+  background-color:#EF233C;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #D90429;
 }
 
 .textfield {
-  @apply shadow border border-zinc-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none;
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none;
 }
 
 .textfield-label {
   @apply block text-gray-700 text-sm font-bold mb-2;
+}
+
+.bgRedPrimary{
+  background-color: #EF233C;
 }

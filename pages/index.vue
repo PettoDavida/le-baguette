@@ -1,12 +1,14 @@
 <template>
-  <div class="grid place-items-center grid-cols-2">
+  <div class="flex flex-row justify-around items-start">
     <div class="flex flex-col">
       <select @change="setShownPosts">
         <option value="popular">Popular</option>
         <option value="home">Home</option>
       </select>
-      Posts
-      {{ selected }}
+      <p class="text-white">
+        Posts {{ selected }}
+      </p> 
+      
       <div v-if="selected === 'home'">
         <Post
           v-for="post in subPosts"
@@ -36,20 +38,20 @@
         <option value="popular">Popular</option>
       </select>
 
-      <div v-if="selectedSub === 'followed'">
+      <div class="text-white" v-if="selectedSub === 'followed'">
         Subs
         <div v-for="sub in followedSubs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
-      <div v-else>
+      <div class="text-white" v-else>
         Subs
         <div v-for="sub in subs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
     </div>
-    <div v-else>
+    <div class="text-white" v-else>
       Subs
       <div v-for="sub in subs" :key="sub.id">
         <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>

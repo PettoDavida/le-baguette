@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-sm mx-auto">
+  <div class="max-w-sm mx-auto mt-8">
+    <div class="bg-white rounded-md text-center shadow-lg p-4">
     <Form :validation-schema="validationSchema" @submit="newPost">
       <label for="title" class="textfield-label">Title</label>
       <Field name="title" type="text" placeholder="Title" class="textfield" />
@@ -29,6 +30,7 @@
 
       <button type="submit" class="btn btn-primary">Create Post</button>
     </Form>
+  </div>
   </div>
 </template>
 

@@ -1,36 +1,36 @@
 <template>
   <p v-if="pending">Loading...</p>
   <div v-else>
-    <p v-if="isCurrentUserBanned()">You are banned</p>
-
-    <h1>Sub: {{ data?.sub.title }}</h1>
-    <h1>ID: {{ data?.sub.id }}</h1>
-
-    <button
-      v-if="isOwner(user?.id || '')"
-      class="btn btn-primary"
-      @click="deleteSub"
-    >
-      Delete Sub
-    </button>
-
-    <button
-      v-if="!isMember(user?.id || '')"
-      class="btn btn-primary"
-      @click="joinSub"
-    >
-      Join Sub
-    </button>
-
-    <button
-      v-if="isMember(user?.id || '')"
-      class="btn btn-primary"
-      @click="leaveSub"
-    >
-      Leave Sub
-    </button>
-
-    <p>Members:</p>
+    <div class="flex justify-around gap-12 items-start mt-4">
+      <div class="flex flex-col shadow-lg bg-white rounded-lg mb-8 py-8 px-12">
+        <p v-if="isCurrentUserBanned()">You are banned</p>
+    
+        <h1 class="mb-4">Sub: {{ data?.sub.title }}</h1>
+        <h1 class="mb-4">ID: {{ data?.sub.id }}</h1>
+    
+        <button
+          v-if="isOwner(user?.id || '')"
+          class="btn btn-primary"
+          @click="deleteSub"
+        >
+          Delete Sub
+        </button>
+    
+        <button
+          v-if="!isMember(user?.id || '')"
+          class="btn btn-primary"
+          @click="joinSub"
+        >
+          Join Sub
+        </button>
+        <button
+        v-if="isMember(user?.id || '')"
+        class="btn btn-primary"
+        @click="leaveSub"
+      >
+        Leave Sub
+      </button>
+        <p class="mb-4 mt-4">Members:</p>
     <div v-for="member in getMembers()" :key="member.id" class="flex gap-1">
       <NuxtLink :to="`/profile/${member.user_id.id}`">{{
         member.user_id.username
@@ -93,10 +93,11 @@
           Unban User
         </button>
       </div>
+      </div>
+        
     </div>
-
-    <div class="mt-10">
-      <p class="text-2xl mb-5">Posts</p>
+    <div class="mt-10 flex flex-col justify-center items-center">
+      <p class="text-2xl mb-5 text-white">Posts</p>
       <div
         v-for="post in data?.posts"
         :key="post.id"
@@ -114,7 +115,9 @@
         </button>
       </div>
     </div>
+    <div class=""></div>
   </div>
+    </div>
 </template>
 
 <script setup>

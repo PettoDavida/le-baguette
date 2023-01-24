@@ -1,13 +1,14 @@
 <template>
-  <main class="grid place-items-center">
+  <main class="grid place-items-center mt-12">
+    <div class="bg-white text-center rounded-md w-1/3 shadow-lg p-4">
     <h1>Create Sub</h1>
 
     <Form :validation-schema="validationSchema" @submit="create">
-      <label for="id" class="textfield-label">Name</label>
+      <label for="id" class="textfield-label mt-4">Name</label>
       <Field name="id" type="text" placeholder="Name" class="textfield" />
       <ErrorMessage name="id" class="block text-red-500" />
 
-      <label for="title" class="textfield-label">Title</label>
+      <label for="title" class="textfield-label mt-8">Title</label>
       <Field name="title" type="text" placeholder="Title" class="textfield" />
       <ErrorMessage name="title" class="block text-red-500" />
 
@@ -17,6 +18,7 @@
 
       <button type="submit" class="btn btn-primary">Create Sub</button>
     </Form>
+  </div>
   </main>
 </template>
 

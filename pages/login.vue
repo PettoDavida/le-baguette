@@ -1,8 +1,9 @@
 <template>
   <div class="grid place-items-center">
+    <div class="bg-white rounded-md w-1/3 text-center shadow-lg p-4">
     <h1>Login</h1>
 
-    <Form :validation-schema="validationSchema" @submit="login">
+    <Form class="text-start flex justify-center flex-col" :validation-schema="validationSchema" @submit="login">
       <label for="username" class="textfield-label">Email</label>
       <Field
         name="username"
@@ -12,7 +13,7 @@
       />
       <ErrorMessage name="username" class="block text-red-500" />
 
-      <label for="password" class="textfield-label">Password</label>
+      <label for="password" class="textfield-label mt-8">Password</label>
       <Field
         name="password"
         type="password"
@@ -25,6 +26,7 @@
 
       <button type="submit" class="btn btn-primary">Login</button>
     </Form>
+  </div>
   </div>
 </template>
 

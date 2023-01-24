@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="mt-8">
     <p v-if="pending">Loading...</p>
     <p v-else-if="error">Error: {{ error }}</p>
-    <div class="flex shadow-lg px-10 py-5 bg-lime-300">
-      <div class="px-4 items-center flex flex-col">
+    <div class="flex shadow-lg bg-white rounded-lg mb-8">
+      <div class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg">
         <button @click.stop="upVotePost(id as string)">
           <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
           <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -14,7 +14,7 @@
           <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
         </button>
       </div>
-      <div>
+      <div class=" flex flex-col justify-start items-center ml-12">
         <p>le/{{ post?.sub_id.title }}</p>
         <p>u/{{ post?.user_id.username }}</p>
         <h1>{{ post?.title }}</h1>

@@ -1,6 +1,6 @@
 <template>
   <header
-    class="h-20 flex justify-between items-center border-b border-b-gray-800 border-opacity-20"
+    class="h-20 flex justify-between items-center bgRedPrimary w-full"
   >
     <NuxtLink to="/"
       ><img src="~/public/images/baguette.jpg" alt="Le Baguette" class="w-16"
@@ -54,19 +54,23 @@
       </li>
       <li>
         <button @click="gotoProfile">
-          <AccountIcon />
+          <AccountIcon class="text-white" />
         </button>
       </li>
       <li>
         <button class="btn btn-primary" @click="logout">Logout</button>
       </li>
     </ul>
-    <ul v-else class="flex gap-20">
+    <ul v-else class="flex gap-20 p-8">
       <li>
-        <NuxtLink to="/login" class="btn btn-primary">Login</NuxtLink>
+        <NuxtLink to="/login" class=""><span class="material-symbols-outlined text-white">
+            login
+          </span></NuxtLink>
       </li>
       <li>
-        <NuxtLink to="/register" class="btn btn-primary">Register</NuxtLink>
+        <NuxtLink to="/register"><span class="material-symbols-outlined text-white">
+            account_circle
+          </span></NuxtLink>
       </li>
     </ul>
 
@@ -104,3 +108,7 @@ const doSearch = async () => {
   await refreshNuxtData(["subs", "posts"])
 }
 </script>
+
+<style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0");
+</style>

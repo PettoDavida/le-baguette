@@ -1,9 +1,9 @@
 <template>
   <div
-    class="flex shadow-lg px-10 py-5 bg-lime-300 hover:cursor-pointer"
+    class="flex shadow-lg bg-white rounded-lg mb-8 hover:cursor-pointer"
     @click="gotoPost"
   >
-    <div class="px-4 items-center flex flex-col">
+    <div class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg">
       <button @click.stop="upVotePost(props.id)">
         <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
         <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -14,7 +14,7 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div>
+    <div class="py-4 px-16">
       <p>Sub: {{ props.sub }}</p>
       <h2>Title: {{ props.title }}</h2>
       <p>Creator: {{ props.creator }}</p>
