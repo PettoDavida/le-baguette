@@ -1,7 +1,9 @@
 <template>
   <p v-if="pending">Loading...</p>
   <div v-else>
-    <div class="flex flex-col md:flex-row justify-around gap-12 items-center md:items-start mt-4">
+    <div
+      class="flex flex-col md:flex-row justify-around gap-12 items-center md:items-start mt-4"
+    >
       <div class="flex flex-col shadow-lg bg-white rounded-lg mb-8 py-8 px-12">
         <p v-if="isCurrentUserBanned()">You are banned</p>
 
