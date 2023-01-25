@@ -1,6 +1,6 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
-  <div class="flex shadow-lg bg-white rounded-lg mb-8 w-full">
+  <div class="flex shadow-lg bg-white rounded-lg mb-2 w-full">
     <div
       class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
     >
@@ -14,7 +14,7 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div class="py-4 px-16">
+    <div class="py-4 px-4">
       <div class="flex gap-4">
         <p>le/{{ props.sub }}</p>
         <p class="text-slate-500">u/{{ props.creator }}</p>
