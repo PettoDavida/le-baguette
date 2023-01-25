@@ -1,6 +1,6 @@
 <template>
   <main class="grid place-items-center mt-12">
-    <div class="bg-white text-center rounded-md w-1/3 shadow-lg p-4">
+    <div class="bg-white text-center rounded-md w-2/3 md:w-1/3 shadow-lg p-4">
     <h1>Create Sub</h1>
 
     <Form :validation-schema="validationSchema" @submit="create">
