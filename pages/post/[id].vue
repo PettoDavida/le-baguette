@@ -2,8 +2,10 @@
   <div class="mt-8">
     <p v-if="pending">Loading...</p>
     <p v-else-if="error">Error: {{ error }}</p>
-    <div class="flex shadow-lg bg-white rounded-lg mb-8">
-      <div class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg">
+    <div class="flex shadow-lg bg-white rounded-lg mb-8 w-max">
+      <div
+        class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg"
+      >
         <button @click.stop="upVotePost(id as string)">
           <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
           <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -14,10 +16,12 @@
           <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
         </button>
       </div>
-      <div class=" flex flex-col justify-start items-center ml-12">
-        <p>le/{{ post?.sub_id.title }}</p>
-        <p>u/{{ post?.user_id.username }}</p>
-        <h1>{{ post?.title }}</h1>
+      <div class="grid ml-4 w-full">
+        <div class="flex gap-4">
+          <p>le/{{ post?.sub_id.id }}</p>
+          <p class="text-slate-500">u/{{ post?.user_id.username }}</p>
+        </div>
+        <h1 class="text-2xl">{{ post?.title }}</h1>
         <span>{{ post?.content }}</span>
       </div>
       <div>
@@ -29,7 +33,11 @@
         </button>
       </div>
     </div>
-    <Form :validation-schema="validationSchema" @submit="createComment">
+    <Form
+      class="flex flex-col w-min"
+      :validation-schema="validationSchema"
+      @submit="createComment"
+    >
       <label for="content" class="textfield-label">Comment</label>
       <Field
         as="textarea"
@@ -40,7 +48,7 @@
       />
       <ErrorMessage name="content" class="block text-red-500" />
 
-      <button type="submit" class="btn btn-primary">Comment</button>
+      <button type="submit" class="btn btn-primary w-1/3">Comment</button>
     </Form>
     <div class="mt-10">
       <p class="text-2xl mb-5">Comments</p>
@@ -125,7 +133,7 @@ const {
   return res as Test
 })
 
-let { data } = useAsyncData(async () => {
+let { data } = useAsyncData("comments", async () => {
   let { data: comments } = await client
     .from("comments")
     .select("*, user_id(username)")
@@ -153,7 +161,7 @@ const createComment = async (values: any) => {
       post_id: id,
     } as never
     let res = await client.from("comments").insert([comment])
-    console.log(res)
+    await refreshNuxtData("comments")
   }
 }
 type Vote = {

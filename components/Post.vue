@@ -1,9 +1,9 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
-  <div
-    class="flex shadow-lg bg-white rounded-lg mb-8 hover:cursor-pointer"
-    @click="gotoPost"
-  >
-    <div class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg">
+  <div class="flex shadow-lg bg-white rounded-lg mb-8 w-full">
+    <div
+      class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
+    >
       <button @click.stop="upVotePost(props.id)">
         <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
         <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -15,10 +15,16 @@
       </button>
     </div>
     <div class="py-4 px-16">
-      <p>Sub: {{ props.sub }}</p>
-      <h2>Title: {{ props.title }}</h2>
-      <p>Creator: {{ props.creator }}</p>
-      <span>Content: {{ props.content }}</span>
+      <div class="flex gap-4">
+        <p>le/{{ props.sub }}</p>
+        <p class="text-slate-500">u/{{ props.creator }}</p>
+      </div>
+      <h2 class="text-2xl hover:cursor-pointer" @click="gotoPost">
+        {{ props.title }}
+      </h2>
+      <span class="hover:cursor-pointer" @click="gotoPost">{{
+        props.content
+      }}</span>
       <div>
         <button v-if="!isFavorited" @click.stop="favorite(id as string)">
           <bookmark />
@@ -102,14 +108,16 @@ useAsyncData(async () => {
 })
 
 useAsyncData("favorited", async () => {
-  let res = await client
-    .from("fAVORITEDpOSTS")
-    .select()
-    .eq("user_id", user.value?.id)
-    .eq("post_id", props.id)
-    .single()
+  if (user.value) {
+    let res = await client
+      .from("fAVORITEDpOSTS")
+      .select()
+      .eq("user_id", user.value?.id)
+      .eq("post_id", props.id)
+      .single()
 
-  isFavorited.value = res.data !== null
+    isFavorited.value = res.data !== null
+  }
 })
 const props = defineProps({
   title: {

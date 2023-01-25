@@ -1,14 +1,12 @@
 <template>
   <div class="flex flex-row justify-around items-start">
-    <div class="flex flex-col">
-      <select @change="setShownPosts">
+    <div v-if="user" class="flex flex-col">
+      <select class="w-20" @change="setShownPosts">
         <option value="popular">Popular</option>
         <option value="home">Home</option>
       </select>
-      <p class="text-white">
-        Posts {{ selected }}
-      </p> 
-      
+      <p class="text-white">Posts {{ selected }}</p>
+
       <div v-if="selected === 'home'">
         <Post
           v-for="post in subPosts"
@@ -16,7 +14,7 @@
           :key="post.id"
           :title="post.title || 'Error'"
           :content="post.content || 'Error'"
-          :sub="post.sub_id.title || 'Error'"
+          :sub="post.sub_id || 'Error'"
           :creator="post.user_id.username || 'Error'"
         />
       </div>
@@ -27,10 +25,21 @@
           :key="post.id"
           :title="post.title || 'Error'"
           :content="post.content || 'Error'"
-          :sub="post.sub_id.title || 'Error'"
+          :sub="post.sub_id || 'Error'"
           :creator="post.user_id.username || 'Error'"
         />
       </div>
+    </div>
+    <div v-else class="flex flex-col">
+      <Post
+        v-for="post in allPosts"
+        :id="post.id || 'Error'"
+        :key="post.id"
+        :title="post.title || 'Error'"
+        :content="post.content || 'Error'"
+        :sub="post.sub_id || 'Error'"
+        :creator="post.user_id.username || 'Error'"
+      />
     </div>
     <div v-if="user">
       <select @change="setShownSubs">
@@ -38,20 +47,20 @@
         <option value="popular">Popular</option>
       </select>
 
-      <div class="text-white" v-if="selectedSub === 'followed'">
+      <div v-if="selectedSub === 'followed'" class="text-white">
         Subs
         <div v-for="sub in followedSubs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
-      <div class="text-white" v-else>
+      <div v-else class="text-white">
         Subs
         <div v-for="sub in subs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
     </div>
-    <div class="text-white" v-else>
+    <div v-else class="text-white">
       Subs
       <div v-for="sub in subs" :key="sub.id">
         <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
@@ -81,13 +90,13 @@ const { data: subs } = await useAsyncData("subs", async () => {
   return data
 })
 
-const { data: followedSubs } = await useAsyncData("subs", async () => {
+const { data: followedSubs } = await useAsyncData("joinedSubs", async () => {
   let { data: subMembers } = await client
     .from("submembers")
     .select()
     .eq("user_id", user.value.id)
   let subs = subMembers.map((item) => item.sub_id)
-  const { data } = await client.from("subs").select().in("sub_id", subs)
+  const { data } = await client.from("subs").select().in("id", subs)
   return data
 })
 
@@ -99,7 +108,7 @@ const { data: subPosts } = await useAsyncData("subPosts", async () => {
   let subs = subMembers.map((item) => item.sub_id)
   let { data: posts } = await client
     .from("posts")
-    .select("*, sub_id(title), user_id(username)")
+    .select("*, user_id(username)")
     .in("sub_id", subs)
   return posts
 })
@@ -107,7 +116,7 @@ const { data: subPosts } = await useAsyncData("subPosts", async () => {
 const { data: allPosts } = await useAsyncData("allSubPosts", async () => {
   let { data: posts } = await client
     .from("posts")
-    .select("*, sub_id(title), user_id(username)")
+    .select("*, user_id(username)")
   return posts
 })
 </script>

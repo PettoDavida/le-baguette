@@ -1,6 +1,8 @@
 <template>
   <div class="flex shadow-lg bg-white rounded-lg mb-8">
-    <div class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg">
+    <div
+      class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg"
+    >
       <button @click.stop="upVotePost(props.id)">
         <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
         <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -11,14 +13,13 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div class="flex flex-col items-center justify-center py-4 px-16">
-      <button v-if="userOwner" @click="deleteComment(props.id)">
-        <Delete />
-      </button>
-
+    <div class="grid px-4">
       <p class="text-slate-500">u/{{ props.creator }}</p>
       <span>{{ props.content }}</span>
     </div>
+    <button v-if="userOwner" @click="deleteComment(props.id)">
+      <Delete />
+    </button>
   </div>
 </template>
 
@@ -227,6 +228,6 @@ const deleteComment = async (comment_id: string) => {
   }
 
   await client.from("comments").delete().eq("id", comment_id)
-  window.location.reload()
+  refreshNuxtData("comments")
 }
 </script>

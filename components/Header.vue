@@ -1,9 +1,7 @@
 <template>
-  <header
-    class="h-20 flex justify-between items-center bgRedPrimary w-full"
-  >
+  <header class="h-20 flex justify-between items-center bgRedPrimary w-full">
     <NuxtLink to="/"
-      ><img src="~/public/images/baguette.jpg" alt="Le Baguette" class="w-16"
+      ><img src="~/public/images/baguette.png" alt="Le Baguette" class="w-16"
     /></NuxtLink>
 
     <Form @submit="doSearch">
@@ -53,8 +51,9 @@
         <NuxtLink to="/createsub" class="btn btn-primary">Create Sub</NuxtLink>
       </li>
       <li>
-        <button @click="gotoProfile">
+        <button class="flex flex-col items-center" @click="gotoProfile">
           <AccountIcon class="text-white" />
+          <span class="text-white text-xs">u/{{ data }}</span>
         </button>
       </li>
       <li>
@@ -63,14 +62,11 @@
     </ul>
     <ul v-else class="flex gap-20 p-8">
       <li>
-        <NuxtLink to="/login" class=""><span class="material-symbols-outlined text-white">
-            login
-          </span></NuxtLink>
-      </li>
-      <li>
-        <NuxtLink to="/register"><span class="material-symbols-outlined text-white">
+        <NuxtLink to="/login">
+          <span class="material-symbols-outlined text-white">
             account_circle
-          </span></NuxtLink>
+          </span>
+        </NuxtLink>
       </li>
     </ul>
 
@@ -90,6 +86,15 @@ const client = useSupabaseAuthClient()
 const user = useSupabaseUser()
 
 let loading = ref(false)
+
+const { data } = useAsyncData(async () => {
+  let username = await client
+    .from("userdata")
+    .select("username")
+    .eq("id", user.value.id)
+    .single()
+  return username.data.username
+})
 
 const logout = async () => {
   await client.auth.signOut()

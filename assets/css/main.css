@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-  background-color: #2B2D42;
+body {
+  background-color: #2b2d42;
 }
 
 .btn {
@@ -11,21 +11,21 @@ body{
 }
 
 .btn-primary {
-  background-color:#EF233C;
+  background-color: #ef233c;
   color: white;
 }
 .btn-primary:hover {
-  background-color: #D90429;
+  background-color: #d90429;
 }
 
 .textfield {
-  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none;
+  @apply shadow appearance-none border rounded w-80 py-2 px-3 text-gray-700 leading-tight focus:outline-none md:w-96;
 }
 
 .textfield-label {
-  @apply block text-gray-700 text-sm font-bold mb-2;
+  @apply block text-white text-sm font-bold mb-2;
 }
 
-.bgRedPrimary{
-  background-color: #EF233C;
+.bgRedPrimary {
+  background-color: #ef233c;
 }
