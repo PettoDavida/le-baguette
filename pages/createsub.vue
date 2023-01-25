@@ -1,9 +1,9 @@
 <template>
-  <main class="grid place-items-center mt-12">
-    <div class="bg-white text-center rounded-md w-2/3 md:w-1/3 shadow-lg p-4">
+  <main class="flex flex-col justify-center items-center mt-12">
+    <div class="bg-white text-center rounded-md w-full md:w-2/3 lg:w-auto shadow-lg p-4">
     <h1>Create Sub</h1>
 
-    <Form :validation-schema="validationSchema" @submit="create">
+    <Form class="flex flex-col justify-center items-center" :validation-schema="validationSchema" @submit="create">
       <label for="id" class="textfield-label mt-4">Name</label>
       <Field name="id" type="text" placeholder="Name" class="textfield" />
       <ErrorMessage name="id" class="block text-red-500" />
@@ -16,7 +16,7 @@
       <Field name="image" type="text" placeholder="Image" class="textfield" />
       <ErrorMessage name="image" class="block text-red-500" /> -->
 
-      <button type="submit" class="btn btn-primary">Create Sub</button>
+      <button type="submit" class="btn btn-primary mt-4">Create Sub</button>
     </Form>
   </div>
   </main>

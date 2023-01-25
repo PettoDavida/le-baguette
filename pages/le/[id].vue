@@ -6,7 +6,7 @@
         <p v-if="isCurrentUserBanned()">You are banned</p>
 
         <h1 class="mb-4">Sub: {{ data?.sub.title }}</h1>
-        <h1 class="mb-4">ID: {{ data?.sub.id }}</h1>
+        <h2 class="mb-4">ID: {{ data?.sub.id }}</h2>
 
         <button
           v-if="isOwner(user?.id || '')"
@@ -30,7 +30,7 @@
         >
           Leave Sub
         </button>
-        <p class="mb-4 mt-4">Members:</p>
+        <h3 class="mb-4 mt-4">Members:</h3>
         <div v-for="member in getMembers()" :key="member.id" class="flex gap-1">
           <NuxtLink :to="`/profile/${member.user_id.id}`">{{
             member.user_id.username

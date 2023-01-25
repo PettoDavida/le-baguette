@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row">
+    <div class="flex flex-row-reverse px-4">
         <button class="hamburger" type="button" @click="menuOpen = !menuOpen">
             <span class="material-symbols-outlined text-white">
             menu
@@ -43,6 +43,7 @@
 
 .dropdown {
   margin-top: 5rem;
+  width: 0;
   height: 0px;
   background-color: white;
   display: flex;
