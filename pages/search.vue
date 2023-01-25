@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row justify-around items-center pt-4">
+  <div class="flex flex-col md:flex-row justify-around items-center pt-4">
     <div class="flex flex-col shadow-lg bg-white rounded-lg mb-8 py-6 px-8">
       Subs:
       <div v-for="sub in subs" :key="sub.id">
