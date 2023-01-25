@@ -1,7 +1,7 @@
 <template>
-  <div class="flex shadow-lg bg-white rounded-lg mb-8">
+  <div class="flex shadow-lg bg-white rounded-lg mb-8 min-w-full relative">
     <div
-      class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg"
+      class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
     >
       <button @click.stop="upVotePost(props.id)">
         <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
@@ -13,11 +13,15 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div class="grid px-4">
+    <div class="grid grid-rows-4 px-4">
       <p class="text-slate-500">u/{{ props.creator }}</p>
-      <span>{{ props.content }}</span>
+      <span class="row-start-2">{{ props.content }}</span>
     </div>
-    <button v-if="userOwner" @click="deleteComment(props.id)">
+    <button
+      v-if="userOwner"
+      class="absolute left-16 bottom-0"
+      @click="deleteComment(props.id)"
+    >
       <Delete />
     </button>
   </div>

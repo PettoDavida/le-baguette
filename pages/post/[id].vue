@@ -1,10 +1,12 @@
 <template>
-  <div class="mt-8">
+  <div class="mt-8 flex flex-col items-center">
     <p v-if="pending">Loading...</p>
     <p v-else-if="error">Error: {{ error }}</p>
-    <div class="flex shadow-lg bg-white rounded-lg mb-8 w-max">
+    <div
+      class="flex shadow-lg bg-white rounded-lg mb-8 min-w-max w-2/4 min-h-max lg:w-1/3"
+    >
       <div
-        class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-lg"
+        class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
       >
         <button @click.stop="upVotePost(id as string)">
           <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
@@ -38,20 +40,22 @@
       :validation-schema="validationSchema"
       @submit="createComment"
     >
-      <label for="content" class="textfield-label">Comment</label>
+      <label for="content" class="block text-white text-sm font-semibold mb-2"
+        >Comment</label
+      >
       <Field
         as="textarea"
         name="content"
         placeholder="Comment"
         class="textfield resize-none"
-        rows="5"
+        rows="2"
       />
       <ErrorMessage name="content" class="block text-red-500" />
 
       <button type="submit" class="btn btn-primary w-1/3">Comment</button>
     </Form>
-    <div class="mt-10">
-      <p class="text-2xl mb-5">Comments</p>
+    <div class="mt-10 w-3/4 sm:w-1/2 lg:w-1/3">
+      <p class="text-2xl mb-5 text-white">Comments</p>
       <div
         v-for="comment in data?.comments"
         :key="comment.id"

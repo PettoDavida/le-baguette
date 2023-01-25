@@ -1,7 +1,7 @@
 <template>
   <p v-if="pending">Loading...</p>
-  <div v-else>
-    <div class="flex flex-col w-24">
+  <div v-else class="flex flex-col items-center">
+    <div class="flex flex-col w-72">
       <img src="" alt="" />
       <h1 class="text-white">u/{{ data?.userProfile.username }}</h1>
       <span class="text-white">karma = {{ data?.karma }}</span>
@@ -19,7 +19,7 @@
         </button>
       </div>
     </div>
-    <div class="overflow-hidden bg-slate-100">
+    <div class="overflow-hidden bg-slate-100 flex justify-evenly w-fit">
       <button
         class="bg-slate-100 px-3 py-4"
         :class="{ 'bg-red-500': selectedTab === 'posts' }"
@@ -61,8 +61,8 @@
       </div>
     </div>
 
-    <div v-if="selectedTab === 'posts'" id="posts" class="tabcontent">
-      <div v-for="post in data?.posts" :key="post.id" class="mt-4">
+    <div v-if="selectedTab === 'posts'" id="posts">
+      <div v-for="post in data?.posts" :key="post.id" class="mt-4 w-80">
         <Post
           :id="post.id || 'Error'"
           :key="post.id"
@@ -74,8 +74,12 @@
       </div>
     </div>
 
-    <div v-if="selectedTab === 'comments'" id="comments" class="tabcontent">
-      <div v-for="comment in data?.comments" :key="comment.id" class="mt-4">
+    <div v-if="selectedTab === 'comments'" id="comments">
+      <div
+        v-for="comment in data?.comments"
+        :key="comment.id"
+        class="mt-4 w-80"
+      >
         <Comment
           :id="comment.id || 'Error'"
           :content="comment.content || 'Error'"
@@ -85,11 +89,11 @@
       </div>
     </div>
 
-    <div v-if="selectedTab === 'favorited'" id="favorited" class="tabcontent">
+    <div v-if="selectedTab === 'favorited'" id="favorited">
       <div
         v-for="favorites in data?.favorited"
         :key="favorites.id"
-        class="mt-4"
+        class="mt-4 w-80"
       >
         <Post
           :id="favorites?.post_id.id || 'Error'"

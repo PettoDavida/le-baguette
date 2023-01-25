@@ -1,6 +1,6 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
-  <div class="flex shadow-lg bg-white rounded-lg mb-2 w-full">
+  <div class="flex shadow-lg bg-white rounded-lg mb-2 w-full relative">
     <div
       class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
     >
@@ -25,14 +25,15 @@
       <span class="hover:cursor-pointer" @click="gotoPost">{{
         props.content
       }}</span>
-      <div>
-        <button v-if="!isFavorited" @click.stop="favorite(id as string)">
-          <bookmark />
-        </button>
-        <button v-else @click.stop="unFavorite(id as string)">
-          <bookmarksolid />
-        </button>
-      </div>
+    </div>
+
+    <div class="py-4 absolute right-2">
+      <button v-if="!isFavorited" @click.stop="favorite(id as string)">
+        <bookmark />
+      </button>
+      <button v-else @click.stop="unFavorite(id as string)">
+        <bookmarksolid />
+      </button>
     </div>
   </div>
 </template>

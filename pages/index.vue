@@ -1,11 +1,13 @@
 <template>
   <div class="flex flex-row justify-around items-start">
     <div v-if="user" class="flex flex-col">
-      <select class="w-20" @change="setShownPosts">
-        <option value="popular">Popular</option>
-        <option value="home">Home</option>
+      <select
+        class="my-2 block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+        @change="setShownPosts"
+      >
+        <option value="popular">Popular Posts</option>
+        <option value="home">Sub Posts</option>
       </select>
-      <p class="text-white">Posts {{ selected }}</p>
 
       <div v-if="selected === 'home'">
         <Post
@@ -42,9 +44,12 @@
       />
     </div>
     <div v-if="user">
-      <select @change="setShownSubs">
-        <option value="followed">Followed</option>
-        <option value="popular">Popular</option>
+      <select
+        class="my-2 block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+        @change="setShownSubs"
+      >
+        <option value="followed">Joined Subs</option>
+        <option value="popular">Popular Subs</option>
       </select>
 
       <div v-if="selectedSub === 'followed'" class="text-white">
