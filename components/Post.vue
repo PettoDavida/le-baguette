@@ -14,7 +14,7 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div class="py-4 px-16">
+    <div class="px-4 md:py-4 md:px-16">
       <p>Sub: {{ props.sub }}</p>
       <h2>Title: {{ props.title }}</h2>
       <p>Creator: {{ props.creator }}</p>

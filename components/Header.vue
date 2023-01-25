@@ -42,15 +42,15 @@
         />
       </div>
     </Form>
-
-    <ul v-if="user" class="flex gap-4 items-center">
+    <Hamburger class="block md:hidden"/>
+    <ul v-if="user" class="hidden md:flex gap-4 items-center">
       <li>
         <button class="btn btn-primary" @click="router.replace('/newpost')">
           <PlusIcon />
         </button>
       </li>
       <li>
-        <NuxtLink to="/createsub" class="btn btn-primary">Create Sub</NuxtLink>
+        <NuxtLink to="/createsub" class=" text-white bg-transparent md:btn md:btn-primary">Create Sub</NuxtLink>
       </li>
       <li>
         <button @click="gotoProfile">
@@ -61,7 +61,8 @@
         <button class="btn btn-primary" @click="logout">Logout</button>
       </li>
     </ul>
-    <ul v-else class="flex gap-20 p-8">
+    
+    <ul v-else class="hidden md:flex gap-20 p-8">
       <li>
         <NuxtLink to="/login" class=""><span class="material-symbols-outlined text-white">
             login
