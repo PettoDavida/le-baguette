@@ -1,41 +1,51 @@
 <template>
-  <div class="grid place-items-center">
-    <h1>Register</h1>
+  <div class="flex justify-center items-center flex-col mt-8">
+    <div class="bg-white rounded-md text-center w-full md:w-auto shadow-lg p-4 md:px-8 md:py-4">
+      <h1>Register</h1>
 
-    <Form :validation-schema="validationSchema" @submit="register">
-      <label for="username" class="textfield-label">Email</label>
-      <Field
-        name="username"
-        type="text"
-        placeholder="Email"
-        class="textfield"
-      />
-      <ErrorMessage name="username" class="block text-red-500" />
+      <Form
+        class="text-start flex justify-center flex-col"
+        :validation-schema="validationSchema"
+        @submit="register"
+      >
+        <label for="username" class="textfield-label mt-4">Email</label>
+        <Field
+          name="username"
+          type="text"
+          placeholder="Email"
+          class="textfield"
+        />
+        <ErrorMessage name="username" class="block text-red-500" />
 
-      <label for="password" class="textfield-label">Password</label>
-      <Field
-        name="password"
-        type="password"
-        placeholder="Password"
-        class="textfield"
-      />
-      <ErrorMessage name="password" class="block text-red-500" />
+        <label for="password" class="textfield-label mt-8">Password</label>
+        <Field
+          name="password"
+          type="password"
+          placeholder="Password"
+          class="textfield"
+        />
+        <ErrorMessage name="password" class="block text-red-500" />
 
-      <label for="confirmPassword" class="textfield-label">
-        Confirm Password
-      </label>
-      <Field
-        name="confirmPassword"
-        type="password"
-        placeholder="Confirm Password"
-        class="textfield"
-      />
-      <ErrorMessage name="confirmPassword" class="block text-red-500" />
+        <label for="confirmPassword" class="textfield-label mt-8">
+          Confirm Password
+        </label>
+        <Field
+          name="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+          class="textfield"
+        />
+        <ErrorMessage name="confirmPassword" class="block text-red-500" />
 
-      <p v-if="error" class="text-red-500">{{ error }}</p>
+        <p v-if="error" class="text-red-500">{{ error }}</p>
 
-      <button type="submit" class="btn btn-primary">Register</button>
-    </Form>
+        <button type="submit" class="btn btn-primary">Register</button>
+      </Form>
+      <span
+        >Already have an account?
+        <NuxtLink to="/login">Login here</NuxtLink></span
+      >
+    </div>
   </div>
 </template>
 

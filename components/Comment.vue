@@ -1,6 +1,8 @@
 <template>
-  <div class="shadow-lg px-10 py-5 border flex">
-    <div class="px-4 items-center flex flex-col">
+  <div class="flex shadow-lg bg-white rounded-lg mb-8 min-w-full relative">
+    <div
+      class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
+    >
       <button @click.stop="upVotePost(props.id)">
         <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
         <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -11,14 +13,17 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div>
-      <button v-if="userOwner" @click="deleteComment(props.id)">
-        <Delete />
-      </button>
-
+    <div class="grid grid-rows-4 px-4">
       <p class="text-slate-500">u/{{ props.creator }}</p>
-      <span>{{ props.content }}</span>
+      <span class="row-start-2">{{ props.content }}</span>
     </div>
+    <button
+      v-if="userOwner"
+      class="absolute left-16 bottom-0"
+      @click="deleteComment(props.id)"
+    >
+      <Delete />
+    </button>
   </div>
 </template>
 
@@ -63,9 +68,8 @@ useAsyncData(async () => {
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", props.id)
-      .single()
     if (!res.error) {
-      switch ((res.data as any).value) {
+      switch ((res.data[0] as any).value) {
         case -1:
           upvote.value = false
           downvote.value = true
@@ -135,7 +139,6 @@ const upVotePost = async (comment_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", comment_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -146,7 +149,7 @@ const upVotePost = async (comment_id: string) => {
       downvote.value = false
       console.log(res)
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === 1) {
         await client
@@ -180,7 +183,6 @@ const downVotePost = async (comment_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", comment_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -190,7 +192,7 @@ const downVotePost = async (comment_id: string) => {
       upvote.value = false
       downvote.value = true
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === -1) {
         await client
@@ -227,6 +229,6 @@ const deleteComment = async (comment_id: string) => {
   }
 
   await client.from("comments").delete().eq("id", comment_id)
-  window.location.reload()
+  refreshNuxtData("comments")
 }
 </script>

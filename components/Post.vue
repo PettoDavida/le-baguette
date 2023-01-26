@@ -1,9 +1,9 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
-  <div
-    class="flex shadow-lg px-10 py-5 bg-lime-300 hover:cursor-pointer"
-    @click="gotoPost"
-  >
-    <div class="px-4 items-center flex flex-col">
+  <div class="flex shadow-lg bg-white rounded-lg mb-2 relative">
+    <div
+      class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
+    >
       <button @click.stop="upVotePost(props.id)">
         <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
         <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -14,19 +14,26 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div>
-      <p>Sub: {{ props.sub }}</p>
-      <h2>Title: {{ props.title }}</h2>
-      <p>Creator: {{ props.creator }}</p>
-      <span>Content: {{ props.content }}</span>
-      <div>
-        <button v-if="!isFavorited" @click.stop="favorite(id as string)">
-          <bookmark />
-        </button>
-        <button v-else @click.stop="unFavorite(id as string)">
-          <bookmarksolid />
-        </button>
+    <div class="w-fit px-2 py-4 md:px-4">
+      <div class="flex gap-2">
+        <p>le/{{ props.sub }}</p>
+        <p class="text-slate-500">u/{{ props.creator }}</p>
       </div>
+      <h2 class="text-2xl hover:cursor-pointer" @click="gotoPost">
+        {{ props.title }}
+      </h2>
+      <span class="hover:cursor-pointer" @click="gotoPost">{{
+        props.content
+      }}</span>
+    </div>
+
+    <div class="py-4 absolute right-2">
+      <button v-if="!isFavorited" @click.stop="favorite(id as string)">
+        <bookmark />
+      </button>
+      <button v-else @click.stop="unFavorite(id as string)">
+        <bookmarksolid />
+      </button>
     </div>
   </div>
 </template>
@@ -79,9 +86,8 @@ useAsyncData(async () => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", props.id)
-      .single()
     if (!res.error) {
-      switch ((res.data as any).value) {
+      switch ((res.data[0] as any).value) {
         case -1:
           upvote.value = false
           downvote.value = true
@@ -102,14 +108,15 @@ useAsyncData(async () => {
 })
 
 useAsyncData("favorited", async () => {
-  let res = await client
-    .from("fAVORITEDpOSTS")
-    .select()
-    .eq("user_id", user.value?.id)
-    .eq("post_id", props.id)
-    .single()
+  if (user.value) {
+    let res = await client
+      .from("fAVORITEDpOSTS")
+      .select()
+      .eq("user_id", user.value?.id)
+      .eq("post_id", props.id)
 
-  isFavorited.value = res.data !== null
+    isFavorited.value = res.data ? res.data.length > 0 : false
+  }
 })
 const props = defineProps({
   title: {
@@ -141,7 +148,6 @@ const upVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -151,7 +157,7 @@ const upVotePost = async (post_id: string) => {
       upvote.value = true
       downvote.value = false
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === 1) {
         await client
@@ -185,7 +191,6 @@ const downVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -195,7 +200,7 @@ const downVotePost = async (post_id: string) => {
       upvote.value = false
       downvote.value = true
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === -1) {
         await client

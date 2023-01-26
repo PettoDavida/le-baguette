@@ -1,22 +1,30 @@
 <template>
-  <main class="grid place-items-center">
-    <h1>Create Sub</h1>
+  <main class="flex flex-col justify-center items-center mt-12">
+    <div
+      class="bg-white text-center rounded-md w-10/12 sm:w-2/3 lg:w-auto shadow-lg p-4"
+    >
+      <h1>Create Sub</h1>
 
-    <Form :validation-schema="validationSchema" @submit="create">
-      <label for="id" class="textfield-label">Name</label>
-      <Field name="id" type="text" placeholder="Name" class="textfield" />
-      <ErrorMessage name="id" class="block text-red-500" />
+      <Form
+        class="flex flex-col justify-center items-center"
+        :validation-schema="validationSchema"
+        @submit="create"
+      >
+        <label for="id" class="textfield-label mt-4">Name</label>
+        <Field name="id" type="text" placeholder="Name" class="textfield" />
+        <ErrorMessage name="id" class="block text-red-500" />
 
-      <label for="title" class="textfield-label">Title</label>
-      <Field name="title" type="text" placeholder="Title" class="textfield" />
-      <ErrorMessage name="title" class="block text-red-500" />
+        <label for="title" class="textfield-label mt-8">Title</label>
+        <Field name="title" type="text" placeholder="Title" class="textfield" />
+        <ErrorMessage name="title" class="block text-red-500" />
 
-      <!-- <label for="image" class="textfield-label"> Image </label>
+        <!-- <label for="image" class="textfield-label"> Image </label>
       <Field name="image" type="text" placeholder="Image" class="textfield" />
       <ErrorMessage name="image" class="block text-red-500" /> -->
 
-      <button type="submit" class="btn btn-primary">Create Sub</button>
-    </Form>
+        <button type="submit" class="btn btn-primary mt-4">Create Sub</button>
+      </Form>
+    </div>
   </main>
 </template>
 

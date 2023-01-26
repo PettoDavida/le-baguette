@@ -1,13 +1,13 @@
 <template>
-  <div class="grid place-items-center">
-    <div class="">
-      Subs
+  <div class="flex flex-col md:flex-row justify-around items-center pt-4">
+    <div class="flex flex-col shadow-lg bg-white rounded-lg mb-8 py-6 px-8">
+      Subs:
       <div v-for="sub in subs" :key="sub.id">
         <NuxtLink :to="'/le/' + sub.id">le/{{ sub.id }}</NuxtLink>
       </div>
     </div>
-    <div class="">
-      Posts
+    <div class="flex flex-col shadow-lg bg-white rounded-lg mb-8 py-6 px-8">
+      <p class="mb-4">Posts:</p> 
       <Post
         v-for="post in posts"
         :id="post.id || 'Error'"

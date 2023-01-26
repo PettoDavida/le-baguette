@@ -1,9 +1,13 @@
 <template>
-  <div>
+  <div class="mt-8 flex flex-col items-center">
     <p v-if="pending">Loading...</p>
     <p v-else-if="error">Error: {{ error }}</p>
-    <div class="flex shadow-lg px-10 py-5 bg-lime-300">
-      <div class="px-4 items-center flex flex-col">
+    <div
+      class="flex shadow-lg bg-white rounded-lg mb-8 min-w-max w-2/4 min-h-max lg:w-1/3"
+    >
+      <div
+        class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
+      >
         <button @click.stop="upVotePost(id as string)">
           <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
           <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -14,10 +18,12 @@
           <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
         </button>
       </div>
-      <div>
-        <p>le/{{ post?.sub_id.title }}</p>
-        <p>u/{{ post?.user_id.username }}</p>
-        <h1>{{ post?.title }}</h1>
+      <div class="grid ml-4 w-full">
+        <div class="flex gap-4">
+          <p>le/{{ post?.sub_id.id }}</p>
+          <p class="text-slate-500">u/{{ post?.user_id.username }}</p>
+        </div>
+        <h1 class="text-2xl">{{ post?.title }}</h1>
         <span>{{ post?.content }}</span>
       </div>
       <div>
@@ -29,21 +35,27 @@
         </button>
       </div>
     </div>
-    <Form :validation-schema="validationSchema" @submit="createComment">
-      <label for="content" class="textfield-label">Comment</label>
+    <Form
+      class="flex flex-col w-min"
+      :validation-schema="validationSchema"
+      @submit="createComment"
+    >
+      <label for="content" class="block text-white text-sm font-semibold mb-2"
+        >Comment</label
+      >
       <Field
         as="textarea"
         name="content"
         placeholder="Comment"
         class="textfield resize-none"
-        rows="5"
+        rows="2"
       />
       <ErrorMessage name="content" class="block text-red-500" />
 
-      <button type="submit" class="btn btn-primary">Comment</button>
+      <button type="submit" class="btn btn-primary w-1/3">Comment</button>
     </Form>
-    <div class="mt-10">
-      <p class="text-2xl mb-5">Comments</p>
+    <div class="mt-10 w-3/4 sm:w-1/2 lg:w-1/3">
+      <p class="text-2xl mb-5 text-white">Comments</p>
       <div
         v-for="comment in data?.comments"
         :key="comment.id"
@@ -125,7 +137,7 @@ const {
   return res as Test
 })
 
-let { data } = useAsyncData(async () => {
+let { data } = useAsyncData("comments", async () => {
   let { data: comments } = await client
     .from("comments")
     .select("*, user_id(username)")
@@ -153,7 +165,7 @@ const createComment = async (values: any) => {
       post_id: id,
     } as never
     let res = await client.from("comments").insert([comment])
-    console.log(res)
+    await refreshNuxtData("comments")
   }
 }
 type Vote = {
@@ -182,9 +194,8 @@ useAsyncData(async () => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", id)
-      .single()
     if (!res.error) {
-      switch ((res.data as any).value) {
+      switch ((res.data[0] as any).value) {
         case -1:
           upvote.value = false
           downvote.value = true
@@ -210,9 +221,8 @@ useAsyncData("favorited", async () => {
     .select()
     .eq("user_id", user.value?.id)
     .eq("post_id", id)
-    .single()
 
-  isFavorited.value = res.data !== null
+  isFavorited.value = res.data ? res.data.length > 0 : false
 })
 const upVotePost = async (post_id: string) => {
   if (user.value) {
@@ -221,7 +231,6 @@ const upVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -231,7 +240,7 @@ const upVotePost = async (post_id: string) => {
       upvote.value = true
       downvote.value = false
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === 1) {
         await client
@@ -265,7 +274,6 @@ const downVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -275,7 +283,7 @@ const downVotePost = async (post_id: string) => {
       upvote.value = false
       downvote.value = true
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === -1) {
         await client

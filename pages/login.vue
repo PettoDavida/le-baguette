@@ -1,30 +1,40 @@
 <template>
-  <div class="grid place-items-center">
-    <h1>Login</h1>
+  <div class="flex justify-center items-center flex-col mt-8">
+    <div class="bg-white rounded-md text-center w-full md:w-auto shadow-lg p-4 md:px-8 md:py-4">
+      <h1>Login</h1>
 
-    <Form :validation-schema="validationSchema" @submit="login">
-      <label for="username" class="textfield-label">Email</label>
-      <Field
-        name="username"
-        type="text"
-        placeholder="Email"
-        class="textfield"
-      />
-      <ErrorMessage name="username" class="block text-red-500" />
+      <Form
+        class="text-start flex justify-center flex-col"
+        :validation-schema="validationSchema"
+        @submit="login"
+      >
+        <label for="username" class="textfield-label">Email</label>
+        <Field
+          name="username"
+          type="text"
+          placeholder="Email"
+          class="textfield"
+        />
+        <ErrorMessage name="username" class="block text-red-500" />
 
-      <label for="password" class="textfield-label">Password</label>
-      <Field
-        name="password"
-        type="password"
-        placeholder="Password"
-        class="textfield"
-      />
-      <ErrorMessage name="password" class="block text-red-500" />
+        <label for="password" class="textfield-label mt-8">Password</label>
+        <Field
+          name="password"
+          type="password"
+          placeholder="Password"
+          class="textfield"
+        />
+        <ErrorMessage name="password" class="block text-red-500" />
 
-      <p v-if="error" class="text-red-500">{{ error }}</p>
+        <p v-if="error" class="text-red-500">{{ error }}</p>
 
-      <button type="submit" class="btn btn-primary">Login</button>
-    </Form>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </Form>
+      <span
+        >Don't have an account?
+        <NuxtLink to="/register">Register here</NuxtLink></span
+      >
+    </div>
   </div>
 </template>
 
@@ -60,8 +70,6 @@ const login = async (values) => {
     return
   }
 
-  router.replace("/").then(() => {
-    window.location.reload()
-  })
+  router.replace("/")
 }
 </script>

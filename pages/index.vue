@@ -1,12 +1,14 @@
 <template>
-  <div class="grid place-items-center grid-cols-2">
-    <div class="flex flex-col">
-      <select @change="setShownPosts">
-        <option value="popular">Popular</option>
-        <option value="home">Home</option>
+  <div class="flex flex-col justify-center items-center relative">
+    <div v-if="user" class="flex flex-col">
+      <select
+        class="my-2 block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+        @change="setShownPosts"
+      >
+        <option value="popular">Popular Posts</option>
+        <option value="home">Sub Posts</option>
       </select>
-      Posts
-      {{ selected }}
+
       <div v-if="selected === 'home'">
         <Post
           v-for="post in subPosts"
@@ -14,7 +16,7 @@
           :key="post.id"
           :title="post.title || 'Error'"
           :content="post.content || 'Error'"
-          :sub="post.sub_id.title || 'Error'"
+          :sub="post.sub_id || 'Error'"
           :creator="post.user_id.username || 'Error'"
         />
       </div>
@@ -25,33 +27,64 @@
           :key="post.id"
           :title="post.title || 'Error'"
           :content="post.content || 'Error'"
-          :sub="post.sub_id.title || 'Error'"
+          :sub="post.sub_id || 'Error'"
           :creator="post.user_id.username || 'Error'"
         />
       </div>
     </div>
-    <div v-if="user">
-      <select @change="setShownSubs">
-        <option value="followed">Followed</option>
-        <option value="popular">Popular</option>
+    <div v-else class="flex flex-col">
+      <p
+        class="my-2 block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none text-white dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+      >
+        Posts
+      </p>
+      <Post
+        v-for="post in allPosts"
+        :id="post.id || 'Error'"
+        :key="post.id"
+        :title="post.title || 'Error'"
+        :content="post.content || 'Error'"
+        :sub="post.sub_id || 'Error'"
+        :creator="post.user_id.username || 'Error'"
+      />
+    </div>
+    <div
+      v-if="user"
+      class="hidden md:block absolute right-[15%] lg:right-1/4 top-6"
+    >
+      <select
+        class="my-2 block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none text-white dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+        @change="setShownSubs"
+      >
+        <option value="followed">Joined Subs</option>
+        <option value="popular">Popular Subs</option>
       </select>
 
-      <div v-if="selectedSub === 'followed'">
-        Subs
+      <div v-if="selectedSub === 'followed'" class="text-white">
         <div v-for="sub in followedSubs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
-      <div v-else>
-        Subs
+      <div v-else class="text-white">
         <div v-for="sub in subs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
     </div>
-    <div v-else>
-      Subs
-      <div v-for="sub in subs" :key="sub.id">
+    <div
+      v-else
+      class="text-white hidden md:block absolute right-[15%] lg:right-1/4 top-6"
+    >
+      <p
+        class="my-2 block py-2.5 px-0 text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+      >
+        Subs
+      </p>
+      <div
+        v-for="sub in subs"
+        :key="sub.id"
+        class="block py-2.5 px-0 w-full text-sm bg-transparent appearance-none focus:outline-none focus:ring-0 peer"
+      >
         <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
       </div>
     </div>
@@ -79,13 +112,13 @@ const { data: subs } = await useAsyncData("subs", async () => {
   return data
 })
 
-const { data: followedSubs } = await useAsyncData("subs", async () => {
+const { data: followedSubs } = await useAsyncData("joinedSubs", async () => {
   let { data: subMembers } = await client
     .from("submembers")
     .select()
     .eq("user_id", user.value.id)
   let subs = subMembers.map((item) => item.sub_id)
-  const { data } = await client.from("subs").select().in("sub_id", subs)
+  const { data } = await client.from("subs").select().in("id", subs)
   return data
 })
 
@@ -97,7 +130,7 @@ const { data: subPosts } = await useAsyncData("subPosts", async () => {
   let subs = subMembers.map((item) => item.sub_id)
   let { data: posts } = await client
     .from("posts")
-    .select("*, sub_id(title), user_id(username)")
+    .select("*, user_id(username)")
     .in("sub_id", subs)
   return posts
 })
@@ -105,7 +138,7 @@ const { data: subPosts } = await useAsyncData("subPosts", async () => {
 const { data: allPosts } = await useAsyncData("allSubPosts", async () => {
   let { data: posts } = await client
     .from("posts")
-    .select("*, sub_id(title), user_id(username)")
+    .select("*, user_id(username)")
   return posts
 })
 </script>
