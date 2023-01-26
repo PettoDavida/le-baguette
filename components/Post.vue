@@ -1,6 +1,6 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
-  <div class="flex shadow-lg bg-white rounded-lg mb-2  relative">
+  <div class="flex shadow-lg bg-white rounded-lg mb-2 relative">
     <div
       class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
     >
@@ -27,7 +27,7 @@
       }}</span>
     </div>
 
-    <div class=" px-0 py-4 md:px-2">
+    <div class="py-4 absolute right-2">
       <button v-if="!isFavorited" @click.stop="favorite(id as string)">
         <bookmark />
       </button>
@@ -86,9 +86,8 @@ useAsyncData(async () => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", props.id)
-      .single()
     if (!res.error) {
-      switch ((res.data as any).value) {
+      switch ((res.data[0] as any).value) {
         case -1:
           upvote.value = false
           downvote.value = true
@@ -115,9 +114,8 @@ useAsyncData("favorited", async () => {
       .select()
       .eq("user_id", user.value?.id)
       .eq("post_id", props.id)
-      .single()
 
-    isFavorited.value = res.data !== null
+    isFavorited.value = res.data ? res.data.length > 0 : false
   }
 })
 const props = defineProps({
@@ -150,7 +148,6 @@ const upVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -160,7 +157,7 @@ const upVotePost = async (post_id: string) => {
       upvote.value = true
       downvote.value = false
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === 1) {
         await client
@@ -194,7 +191,6 @@ const downVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -204,7 +200,7 @@ const downVotePost = async (post_id: string) => {
       upvote.value = false
       downvote.value = true
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === -1) {
         await client

@@ -4,84 +4,96 @@
     <div
       class="flex flex-col md:flex-row justify-around gap-12 items-center md:items-start mt-4"
     >
-      <div class="flex flex-col shadow-lg bg-white rounded-lg mb-8 py-8 px-12">
-        <p v-if="isCurrentUserBanned()">You are banned</p>
+      <div
+        class="flex shadow-lg bg-white rounded-lg py-8 px-12 w-full justify-between"
+      >
+        <div>
+          <p v-if="isCurrentUserBanned()">You are banned</p>
 
-        <h1 class="mb-4">Sub: {{ data?.sub.title }}</h1>
-        <h2 class="mb-4">ID: {{ data?.sub.id }}</h2>
-
-        <button
-          v-if="isOwner(user?.id || '')"
-          class="btn btn-primary"
-          @click="deleteSub"
-        >
-          Delete Sub
-        </button>
-
-        <button
-          v-if="!isMember(user?.id || '')"
-          class="btn btn-primary"
-          @click="joinSub"
-        >
-          Join Sub
-        </button>
-        <button
-          v-if="isMember(user?.id || '')"
-          class="btn btn-primary"
-          @click="leaveSub"
-        >
-          Leave Sub
-        </button>
-        <h3 class="mb-4 mt-4">Members:</h3>
-        <div v-for="member in getMembers()" :key="member.id" class="flex gap-1">
-          <NuxtLink :to="`/profile/${member.user_id.id}`">{{
-            member.user_id.username
-          }}</NuxtLink>
-          <p v-if="isOwner(member.user_id.id)">(OWNER)</p>
-          <p v-if="isMod(member.user_id.id)">(MOD)</p>
+          <h1 class="mb-4">Sub: {{ data?.sub.title }}</h1>
+          <h2 class="mb-4">ID: {{ data?.sub.id }}</h2>
 
           <button
-            v-if="
-              isCurrentUserOwner() &&
-              isMod(member.user_id.id) &&
-              !isOwner(member.user_id.id)
-            "
+            v-if="isOwner(user?.id || '')"
             class="btn btn-primary"
-            @click="makeUserOwner(member.user_id.id)"
+            @click="deleteSub"
           >
-            Make Owner
+            Delete Sub
           </button>
 
           <button
-            v-if="isCurrentUserOwner() && !isMod(member.user_id.id)"
+            v-if="!isMember(user?.id || '')"
             class="btn btn-primary"
-            @click="makeUserMod(member.user_id.id)"
+            @click="joinSub"
           >
-            Make Mod
+            Join Sub
           </button>
-
           <button
-            v-if="isCurrentUserOwner() && isMod(member.user_id.id)"
+            v-if="isMember(user?.id || '')"
             class="btn btn-primary"
-            @click="removeUserMod(member.user_id.id)"
+            @click="leaveSub"
           >
-            Kill Mod
-          </button>
-
-          <button
-            v-if="
-              (isCurrentUserOwner() && !isOwner(member.user_id.id)) ||
-              (isCurrentUserMod() && !isMod(member.user_id.id))
-            "
-            class="btn btn-primary"
-            @click="banUser(member.user_id.id)"
-          >
-            Ban User
+            Leave Sub
           </button>
         </div>
+        <div class="overflow-scroll h-full">
+          <h3 class="mb-4 mt-4">Members:</h3>
+          <div class="flex flex-col">
+            <div
+              v-for="member in getMembers()"
+              :key="member.id"
+              class="flex my-1"
+            >
+              <NuxtLink :to="`/profile/${member.user_id.id}`">{{
+                member.user_id.username
+              }}</NuxtLink>
+              <p v-if="isOwner(member.user_id.id)">!</p>
+              <p v-if="isMod(member.user_id.id)">*</p>
 
-        <p class="mt-10">Banned Members</p>
-        <div>
+              <button
+                v-if="
+                  isCurrentUserOwner() &&
+                  isMod(member.user_id.id) &&
+                  !isOwner(member.user_id.id)
+                "
+                class="btn btn-primary"
+                @click="makeUserOwner(member.user_id.id)"
+              >
+                Make Owner
+              </button>
+
+              <button
+                v-if="isCurrentUserOwner() && !isMod(member.user_id.id)"
+                class="btn btn-primary"
+                @click="makeUserMod(member.user_id.id)"
+              >
+                Make Mod
+              </button>
+
+              <button
+                v-if="isCurrentUserOwner() && isMod(member.user_id.id)"
+                class="btn btn-primary"
+                @click="removeUserMod(member.user_id.id)"
+              >
+                Kill Mod
+              </button>
+
+              <button
+                v-if="
+                  (isCurrentUserOwner() && !isOwner(member.user_id.id)) ||
+                  (isCurrentUserMod() && !isMod(member.user_id.id))
+                "
+                class="btn btn-primary"
+                @click="banUser(member.user_id.id)"
+              >
+                Ban User
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p v-if="isCurrentUserOwner()" class="mt-10">Banned Members</p>
+        <div v-if="isCurrentUserOwner()">
           <div v-for="member in getBannedUsers()" :key="member.id">
             <NuxtLink :to="`/profile/${member.user_id.id}`">{{
               member.user_id.username

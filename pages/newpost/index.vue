@@ -1,37 +1,43 @@
 <template>
-  <div class="max-w-sm mx-auto mt-8">
-    <div class="bg-white rounded-md text-center shadow-lg p-4">
+  <div class="mx-auto mt-8 h-max flex justify-center">
+    <div
+      class="bg-white rounded-md text-center shadow-lg p-4 w-10/12 sm:w-2/3 lg:w-auto"
+    >
       <h1 class="mb-4">Create Post</h1>
-    <Form :validation-schema="validationSchema" @submit="newPost">
-      <label for="title" class="textfield-label">Title</label>
-      <Field name="title" type="text" placeholder="Title" class="textfield" />
-      <ErrorMessage name="title" class="block text-red-500" />
+      <Form
+        :validation-schema="validationSchema"
+        class="flex flex-col items-center"
+        @submit="newPost"
+      >
+        <label for="title" class="textfield-label">Title</label>
+        <Field name="title" type="text" placeholder="Title" class="textfield" />
+        <ErrorMessage name="title" class="block text-red-500" />
 
-      <label for="content" class="textfield-label">Content</label>
-      <Field
-        as="textarea"
-        name="content"
-        placeholder="Content"
-        class="textfield resize-none"
-        rows="5"
-      />
-      <ErrorMessage name="content" class="block text-red-500" />
+        <label for="content" class="textfield-label">Content</label>
+        <Field
+          as="textarea"
+          name="content"
+          placeholder="Content"
+          class="textfield resize-none"
+          rows="5"
+        />
+        <ErrorMessage name="content" class="block text-red-500" />
 
-      <label for="sub" class="textfield-label">Sub</label>
-      <Field name="sub" placeholder="sub" as="select" class="block">
-        <option
-          v-for="sub in userSubs"
-          :key="sub.sub_id.id"
-          :value="sub.sub_id.id"
-        >
-          {{ sub.sub_id.title }}
-        </option>
-      </Field>
-      <ErrorMessage name="sub" class="block text-red-500" />
+        <label for="sub" class="textfield-label">Sub</label>
+        <Field name="sub" placeholder="sub" as="select" class="block">
+          <option
+            v-for="sub in userSubs"
+            :key="sub.sub_id.id"
+            :value="sub.sub_id.id"
+          >
+            {{ sub.sub_id.title }}
+          </option>
+        </Field>
+        <ErrorMessage name="sub" class="block text-red-500" />
 
-      <button type="submit" class="btn btn-primary">Create Post</button>
-    </Form>
-  </div>
+        <button type="submit" class="btn btn-primary">Create Post</button>
+      </Form>
+    </div>
   </div>
 </template>
 

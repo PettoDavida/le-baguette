@@ -194,9 +194,8 @@ useAsyncData(async () => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", id)
-      .single()
     if (!res.error) {
-      switch ((res.data as any).value) {
+      switch ((res.data[0] as any).value) {
         case -1:
           upvote.value = false
           downvote.value = true
@@ -222,9 +221,8 @@ useAsyncData("favorited", async () => {
     .select()
     .eq("user_id", user.value?.id)
     .eq("post_id", id)
-    .single()
 
-  isFavorited.value = res.data !== null
+  isFavorited.value = res.data ? res.data.length > 0 : false
 })
 const upVotePost = async (post_id: string) => {
   if (user.value) {
@@ -233,7 +231,6 @@ const upVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -243,7 +240,7 @@ const upVotePost = async (post_id: string) => {
       upvote.value = true
       downvote.value = false
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === 1) {
         await client
@@ -277,7 +274,6 @@ const downVotePost = async (post_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("post_id", post_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -287,7 +283,7 @@ const downVotePost = async (post_id: string) => {
       upvote.value = false
       downvote.value = true
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === -1) {
         await client

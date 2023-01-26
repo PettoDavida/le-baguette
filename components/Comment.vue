@@ -68,9 +68,8 @@ useAsyncData(async () => {
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", props.id)
-      .single()
     if (!res.error) {
-      switch ((res.data as any).value) {
+      switch ((res.data[0] as any).value) {
         case -1:
           upvote.value = false
           downvote.value = true
@@ -140,7 +139,6 @@ const upVotePost = async (comment_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", comment_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -151,7 +149,7 @@ const upVotePost = async (comment_id: string) => {
       downvote.value = false
       console.log(res)
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === 1) {
         await client
@@ -185,7 +183,6 @@ const downVotePost = async (comment_id: string) => {
       .select()
       .eq("user_id", user.value.id)
       .eq("comment_id", comment_id)
-      .single()
     console.log(res)
 
     if (res.error) {
@@ -195,7 +192,7 @@ const downVotePost = async (comment_id: string) => {
       upvote.value = false
       downvote.value = true
     } else {
-      let data = res.data as any
+      let data = res.data[0] as any
       console.log(data)
       if (data.value === -1) {
         await client

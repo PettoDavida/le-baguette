@@ -138,12 +138,8 @@ let { data, pending } = useAsyncData(async () => {
     .select()
     .eq("user_id", id)
     .eq("follower", user.value.id)
-    .single()
 
-  let following = false
-  if (!res.error) {
-    following = true
-  }
+  let following = res.data.length > 0
 
   let { data: followers } = await client
     .from("followers")
