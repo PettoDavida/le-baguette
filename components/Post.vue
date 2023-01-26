@@ -27,7 +27,7 @@
       }}</span>
     </div>
 
-    <div class="py-4 absolute right-2">
+    <div class="py-4 px-2">
       <button v-if="!isFavorited" @click.stop="favorite(id as string)">
         <bookmark />
       </button>

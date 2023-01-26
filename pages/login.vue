@@ -1,6 +1,6 @@
 <template>
-  <div class="grid place-items-center">
-    <div class="bg-white rounded-md w-1/3 text-center shadow-lg p-4">
+  <div class="flex justify-center items-center flex-col mt-8">
+    <div class="bg-white rounded-md text-center w-full md:w-auto shadow-lg p-4 md:px-8 md:py-4">
       <h1>Login</h1>
 
       <Form
