@@ -1,6 +1,6 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
-  <div class="flex shadow-lg bg-white rounded-lg mb-2 w-full relative">
+  <div class="flex shadow-lg bg-white rounded-lg mb-2  relative">
     <div
       class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
     >
@@ -14,8 +14,8 @@
         <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
       </button>
     </div>
-    <div class="py-4 px-4">
-      <div class="flex gap-4">
+    <div class="w-fit px-2 py-4 md:px-4">
+      <div class="flex gap-2">
         <p>le/{{ props.sub }}</p>
         <p class="text-slate-500">u/{{ props.creator }}</p>
       </div>
@@ -27,7 +27,7 @@
       }}</span>
     </div>
 
-    <div class="py-4 absolute right-2">
+    <div class=" px-0 py-4 md:px-2">
       <button v-if="!isFavorited" @click.stop="favorite(id as string)">
         <bookmark />
       </button>

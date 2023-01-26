@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row justify-around items-start">
+  <div class="flex flex-col justify-center items-center md:flex-row md:justify-around md:items-start">
     <div v-if="user" class="flex flex-col">
       <select
         class="my-2 block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
@@ -33,6 +33,7 @@
       </div>
     </div>
     <div v-else class="flex flex-col">
+      <p class="my-2 block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">Posts</p>
       <Post
         v-for="post in allPosts"
         :id="post.id || 'Error'"
@@ -53,21 +54,19 @@
       </select>
 
       <div v-if="selectedSub === 'followed'" class="text-white">
-        Subs
         <div v-for="sub in followedSubs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
-      <div v-else class="text-white">
-        Subs
+      <div v-else class="my-2 block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
         <div v-for="sub in subs" :key="sub.id">
           <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
         </div>
       </div>
     </div>
-    <div v-else class="text-white">
-      Subs
-      <div v-for="sub in subs" :key="sub.id">
+    <div  v-else class="text-white ">
+      <p class="my-2 block py-2.5 px-0 text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">Subs</p>
+      <div class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent appearance-none dark:text-gray-400 focus:outline-none focus:ring-0  peer"  v-for="sub in subs" :key="sub.id">
         <NuxtLink :to="'/le/' + sub.id"> le/{{ sub.id }}</NuxtLink>
       </div>
     </div>
