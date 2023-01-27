@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col justify-center items-center relative">
+  <div class="flex justify-center relative">
     <div v-if="user" class="flex flex-col">
       <select
-        class="my-2 block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+        class="my-2 block py-2.5 px-0 w-fit text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none text-white dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
         @change="setShownPosts"
       >
-        <option value="popular">Popular Posts</option>
-        <option value="home">Sub Posts</option>
+        <option class="text-black" value="popular">Popular Posts</option>
+        <option class="text-black" value="home">Sub Posts</option>
       </select>
 
       <div v-if="selected === 'home'">
@@ -48,16 +48,13 @@
         :creator="post.user_id.username || 'Error'"
       />
     </div>
-    <div
-      v-if="user"
-      class="hidden md:block absolute right-[15%] lg:right-1/4 top-6"
-    >
+    <div v-if="user" class="hidden md:block ml-8">
       <select
         class="my-2 block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none text-white dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
         @change="setShownSubs"
       >
-        <option value="followed">Joined Subs</option>
-        <option value="popular">Popular Subs</option>
+        <option class="text-black" value="followed">Joined Subs</option>
+        <option class="text-black" value="popular">Popular Subs</option>
       </select>
 
       <div v-if="selectedSub === 'followed'" class="text-white">
@@ -71,10 +68,7 @@
         </div>
       </div>
     </div>
-    <div
-      v-else
-      class="text-white hidden md:block absolute right-[15%] lg:right-1/4 top-6"
-    >
+    <div v-else class="hidden md:block ml-8 text-white">
       <p
         class="my-2 block py-2.5 px-0 text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
       >

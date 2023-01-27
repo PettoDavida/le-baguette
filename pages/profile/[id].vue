@@ -56,13 +56,18 @@
         :key="sub.sub_id.id"
         class="flex gap-4 text-white"
       >
-        <NuxtLink :to="'/le/' + sub.sub_id.id">le/{{ sub.sub_id.id }}</NuxtLink>
-        <p>{{ sub.sub_id.title }}</p>
+        <NuxtLink class="mb-2" :to="'/le/' + sub.sub_id.id"
+          >le/{{ sub.sub_id.id }} {{ sub.sub_id.title }}</NuxtLink
+        >
       </div>
     </div>
 
     <div v-if="selectedTab === 'posts'" id="posts">
-      <div v-for="post in data?.posts" :key="post.id" class="mt-4 w-80">
+      <div
+        v-for="post in data?.posts"
+        :key="post.id"
+        class="mt-4 w-full sm:w-[36rem] lg:w-[40rem]"
+      >
         <Post
           :id="post.id || 'Error'"
           :key="post.id"
@@ -78,7 +83,7 @@
       <div
         v-for="comment in data?.comments"
         :key="comment.id"
-        class="mt-4 w-80"
+        class="mt-4 w-fit"
       >
         <Comment
           :id="comment.id || 'Error'"
@@ -93,7 +98,7 @@
       <div
         v-for="favorites in data?.favorited"
         :key="favorites.id"
-        class="mt-4 w-80"
+        class="mt-4 w-full sm:w-[36rem] lg:w-[40rem]"
       >
         <Post
           :id="favorites?.post_id.id || 'Error'"

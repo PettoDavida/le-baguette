@@ -1,116 +1,130 @@
 <template>
   <p v-if="pending">Loading...</p>
   <div v-else>
-    <div
-      class="flex flex-col justify-around gap-12 items-center md:items-center mt-4"
-    >
+    <div class="flex flex-col items-center">
       <div
-        class="flex shadow-lg bg-white rounded-lg py-8 px-12 w-full justify-between"
+        class="flex flex-col shadow-lg bg-white rounded-b-lg py-8 px-12 w-full justify-around h-min"
       >
-        <div>
-          <p v-if="isCurrentUserBanned()">You are banned</p>
-
-          <h1 class="mb-4">Sub: {{ data?.sub.title }}</h1>
-          <h2 class="mb-4">ID: {{ data?.sub.id }}</h2>
-
-          <button
-            v-if="isOwner(user?.id || '')"
-            class="btn btn-primary"
-            @click="deleteSub"
-          >
-            Delete Sub
-          </button>
-
-          <button
-            v-if="!isMember(user?.id || '')"
-            class="btn btn-primary"
-            @click="joinSub"
-          >
-            Join Sub
-          </button>
-          <button
-            v-if="isMember(user?.id || '')"
-            class="btn btn-primary"
-            @click="leaveSub"
-          >
-            Leave Sub
-          </button>
-        </div>
-        <div class="overflow-scroll h-full">
-          <h3 class="mb-4 mt-4">Members:</h3>
-          <div class="flex flex-col">
-            <div
-              v-for="member in getMembers()"
-              :key="member.id"
-              class="flex my-1"
+        <div class="flex h-min">
+          <div>
+            <h1 class="text-4xl">{{ data?.sub.title }}</h1>
+            <h2 class="">le/{{ data?.sub.id }}</h2>
+          </div>
+          <div class="ml-6">
+            <button
+              v-if="!isMember(user?.id || '')"
+              class="btn btn-primary"
+              @click="joinSub"
             >
-              <NuxtLink :to="`/profile/${member.user_id.id}`">{{
-                member.user_id.username
-              }}</NuxtLink>
-              <p v-if="isOwner(member.user_id.id)">!</p>
-              <p v-if="isMod(member.user_id.id)">*</p>
+              Join
+            </button>
 
-              <button
-                v-if="
-                  isCurrentUserOwner() &&
-                  isMod(member.user_id.id) &&
-                  !isOwner(member.user_id.id)
-                "
-                class="btn btn-primary"
-                @click="makeUserOwner(member.user_id.id)"
+            <button
+              v-if="isMember(user?.id || '')"
+              class="btn btn-primary"
+              @click="leaveSub"
+            >
+              Leave
+            </button>
+          </div>
+          <p v-if="isCurrentUserBanned()">You are banned from this group</p>
+        </div>
+        <div class="flex flex-col">
+          <div v-if="isCurrentUserOwner()" class="overflow-scroll">
+            <h3 class="mb-4 mt-4">Members</h3>
+            <div class="flex flex-col">
+              <div
+                v-for="member in getMembers()"
+                :key="member.id"
+                class="flex my-1"
               >
-                Make Owner
-              </button>
+                <NuxtLink :to="`/profile/${member.user_id.id}`">{{
+                  member.user_id.username
+                }}</NuxtLink>
+                <p v-if="isOwner(member.user_id.id)"><Owner /></p>
+                <p
+                  v-if="isMod(member.user_id.id) && !isOwner(member.user_id.id)"
+                >
+                  <Mod />
+                </p>
+                <div>
+                  <button
+                    v-if="
+                      isCurrentUserOwner() &&
+                      isMod(member.user_id.id) &&
+                      !isOwner(member.user_id.id)
+                    "
+                    class="btn btn-primary"
+                    @click="makeUserOwner(member.user_id.id)"
+                  >
+                    Transfer Ownership
+                  </button>
 
-              <button
-                v-if="isCurrentUserOwner() && !isMod(member.user_id.id)"
-                class="btn btn-primary"
-                @click="makeUserMod(member.user_id.id)"
-              >
-                Make Mod
-              </button>
+                  <button
+                    v-if="isCurrentUserOwner() && !isMod(member.user_id.id)"
+                    class="btn btn-primary"
+                    @click="makeUserMod(member.user_id.id)"
+                  >
+                    Mod
+                  </button>
 
-              <button
-                v-if="isCurrentUserOwner() && isMod(member.user_id.id)"
-                class="btn btn-primary"
-                @click="removeUserMod(member.user_id.id)"
-              >
-                Kill Mod
-              </button>
+                  <button
+                    v-if="
+                      isCurrentUserOwner() &&
+                      isMod(member.user_id.id) &&
+                      !isOwner(member.user_id.id)
+                    "
+                    class="btn btn-primary"
+                    @click="removeUserMod(member.user_id.id)"
+                  >
+                    Unmod
+                  </button>
 
-              <button
-                v-if="
-                  (isCurrentUserOwner() && !isOwner(member.user_id.id)) ||
-                  (isCurrentUserMod() && !isMod(member.user_id.id))
-                "
-                class="btn btn-primary"
-                @click="banUser(member.user_id.id)"
-              >
-                Ban User
-              </button>
+                  <button
+                    v-if="
+                      (isCurrentUserOwner() && !isOwner(member.user_id.id)) ||
+                      (isCurrentUserMod() && !isMod(member.user_id.id))
+                    "
+                    class="btn btn-primary"
+                    @click="banUser(member.user_id.id)"
+                  >
+                    Ban
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p v-if="isCurrentUserOwner()" class="mt-10">Banned</p>
+            <div v-if="isCurrentUserOwner()">
+              <p v-if="getBannedUsers().length <= 0">No Banned Users</p>
+              <div v-for="member in getBannedUsers()" :key="member.id">
+                <NuxtLink :to="`/profile/${member.user_id.id}`">{{
+                  member.user_id.username
+                }}</NuxtLink>
+
+                <button
+                  v-if="isCurrentUserOwner()"
+                  class="btn btn-primary"
+                  @click="removeUserBan(member.user_id.id)"
+                >
+                  Unban
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
-        <p v-if="isCurrentUserOwner()" class="mt-10">Banned Members</p>
-        <div v-if="isCurrentUserOwner()">
-          <div v-for="member in getBannedUsers()" :key="member.id">
-            <NuxtLink :to="`/profile/${member.user_id.id}`">{{
-              member.user_id.username
-            }}</NuxtLink>
-
-            <button
-              v-if="isCurrentUserOwner()"
-              class="btn btn-primary"
-              @click="removeUserBan(member.user_id.id)"
-            >
-              Unban User
-            </button>
-          </div>
-        </div>
+        <button
+          v-if="isOwner(user?.id || '')"
+          class="btn btn-primary"
+          @click="deleteSub"
+        >
+          Delete
+        </button>
       </div>
-      <div class="mt-10 flex flex-col justify-center items-center">
-        <p class="text-2xl mb-5 text-white">Posts</p>
+      <div class="mt-10 flex flex-col justify-center items-start">
+        <p class="text-2xl mb-5 text-white text-center w-full">Posts</p>
         <div
           v-for="post in data?.posts"
           :key="post.id"
@@ -123,21 +137,16 @@
             :sub="post.sub_id.title || 'Error'"
             :creator="post.user_id.username || 'Error'"
           />
-          <button
-            v-if="isCurrentUserOwner()"
-            class="btn btn-primary"
-            @click="deletePost(post.id)"
-          >
-            Delete Post
-          </button>
         </div>
       </div>
-      <div class=""></div>
     </div>
   </div>
 </template>
 
 <script setup>
+import Owner from "vue-material-design-icons/Crown.vue"
+import Mod from "vue-material-design-icons/StarCircleOutline.vue"
+
 const route = useRoute()
 const router = useRouter()
 
@@ -182,7 +191,7 @@ const fetchBannedUsers = async (sub_id) => {
   return users
 }
 
-let { data, pending } = useAsyncData(async () => {
+let { data, pending } = useAsyncData("specSubPosts", async () => {
   let { data: subData, error } = await client
     .from("subs")
     .select("*, owner(id, username)")
@@ -404,18 +413,5 @@ const removeUserBan = async (user_id) => {
     .eq("user_id", user_id)
     .eq("sub_id", id)
   console.log(res)
-}
-
-const deletePost = async (post_id) => {
-  let res = await client.from("comments").select().eq("post_id", post_id)
-  if (res.data) {
-    for (const comment of res.data) {
-      await client.from("votes-").delete().eq("comment_id", comment.id)
-    }
-  }
-
-  await client.from("comments").delete().eq("post_id", post_id)
-  await client.from("votes-posts").delete().eq("post_id", post_id)
-  await client.from("posts").delete().eq("id", post_id)
 }
 </script>

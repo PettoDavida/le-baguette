@@ -3,11 +3,9 @@
     <p v-if="pending">Loading...</p>
     <p v-else-if="error">Error: {{ error }}</p>
     <div
-      class="flex shadow-lg bg-white rounded-lg mb-8 min-w-max w-2/4 min-h-max lg:w-1/3"
+      class="flex shadow-lg bg-white rounded-lg mb-8 w-full sm:w-[36rem] lg:w-[40rem] min-h-max relative pr-4"
     >
-      <div
-        class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
-      >
+      <div class="p-4 items-center flex flex-col bgRedPrimary rounded-l-lg">
         <button @click.stop="upVotePost(id as string)">
           <UpVote v-if="!upvote" title="Up Vote" fill-color="#" />
           <UpVoted v-else title="Remove Vote" fill-color="#ff4500" />
@@ -18,15 +16,19 @@
           <DownVoted v-else title="Remove Vote" fill-color="#7193ff" />
         </button>
       </div>
-      <div class="grid ml-4 w-full">
+      <div class="grid ml-4 max-w-2xl">
         <div class="flex gap-4">
-          <p>le/{{ post?.sub_id.id }}</p>
-          <p class="text-slate-500">u/{{ post?.user_id.username }}</p>
+          <p class="hover:cursor-pointer" @click="gotoSub">
+            le/{{ post?.sub_id.id }}
+          </p>
+          <p class="text-slate-500 hover:cursor-pointer" @click="gotoUser">
+            u/{{ post?.user_id.username }}
+          </p>
         </div>
         <h1 class="text-2xl">{{ post?.title }}</h1>
         <span>{{ post?.content }}</span>
       </div>
-      <div>
+      <div class="py-4 absolute -right-0">
         <button v-if="!isFavorited" @click.stop="favorite(id as string)">
           <bookmark />
         </button>
@@ -36,7 +38,7 @@
       </div>
     </div>
     <Form
-      class="flex flex-col w-min"
+      class="flex flex-col w-full sm:w-[36rem] lg:w-[40rem]"
       :validation-schema="validationSchema"
       @submit="createComment"
     >
@@ -54,7 +56,7 @@
 
       <button type="submit" class="btn btn-primary w-1/3">Comment</button>
     </Form>
-    <div class="mt-10 w-3/4 sm:w-1/2 lg:w-1/3">
+    <div class="mt-10 w-full sm:w-[36rem] lg:w-[40rem]">
       <p class="text-2xl mb-5 text-white">Comments</p>
       <div
         v-for="comment in data?.comments"
@@ -93,12 +95,21 @@ const validationSchema = toFormValidator(
 const route = useRoute()
 const id = route.params.id
 
-type Test = {
+const router = useRouter()
+
+const gotoUser = () => {
+  router.push(`/profile/${post.value?.user_id.id}`)
+}
+const gotoSub = () => {
+  router.push(`/le/${post.value?.sub_id.id}`)
+}
+
+type Post = {
   id: string
   title: string
   content: string
   sub_id: { id: string; title: string }
-  user_id: { username: string }
+  user_id: { id: string; username: string }
 }
 
 type User = {
@@ -131,10 +142,10 @@ const {
 } = useAsyncData(async () => {
   let { data: res } = await client
     .from("posts")
-    .select("id, title, content, sub_id(id, title), user_id(username)")
+    .select("id, title, content, sub_id(id, title), user_id(id,username)")
     .eq("id", id)
     .single()
-  return res as Test
+  return res as Post
 })
 
 let { data } = useAsyncData("comments", async () => {
@@ -145,15 +156,6 @@ let { data } = useAsyncData("comments", async () => {
 
   return { comments } as Data
 })
-
-const fetchComments = async (post_id: string) => {
-  let { data: comments } = await client
-    .from("comments")
-    .select("*, user_id(username)")
-    .eq("post_id", post_id)
-
-  return comments as Comment[]
-}
 
 const createComment = async (values: any) => {
   if (!values.content) return
