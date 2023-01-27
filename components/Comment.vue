@@ -1,5 +1,7 @@
 <template>
-  <div class="flex shadow-lg bg-white rounded-lg mb-8 min-w-full relative">
+  <div
+    class="flex shadow-lg bg-white rounded-lg mb-8 w-full sm:w-[36rem] lg:w-[40rem] relative"
+  >
     <div
       class="p-4 items-center flex flex-col justify-center bgRedPrimary rounded-l-lg"
     >
@@ -96,7 +98,6 @@ useAsyncData(async () => {
       .select()
       .eq("user_id", user.value.id)
       .eq("id", props.id)
-      .single()
     if (!res.error) {
       userOwner.value = true
     } else {
@@ -105,7 +106,6 @@ useAsyncData(async () => {
         .select()
         .eq("owner", user.value.id)
         .eq("id", props.subId)
-        .single()
       if (!res.error) {
         userOwner.value = true
       }
