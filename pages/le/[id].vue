@@ -2,7 +2,7 @@
   <p v-if="pending">Loading...</p>
   <div v-else>
     <div
-      class="flex flex-col md:flex-row justify-around gap-12 items-center md:items-start mt-4"
+      class="flex flex-col justify-around gap-12 items-center md:items-center mt-4"
     >
       <div
         class="flex shadow-lg bg-white rounded-lg py-8 px-12 w-full justify-between"

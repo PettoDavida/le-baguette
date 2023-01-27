@@ -157,6 +157,7 @@ const upVotePost = async (post_id: string) => {
       upvote.value = true
       downvote.value = false
     } else {
+      //TODO Ger tillbaka en tom array om det inte existerar något vote leder till att data = undefined
       let data = res.data[0] as any
       console.log(data)
       if (data.value === 1) {
